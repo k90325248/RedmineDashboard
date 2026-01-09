@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Project Issues List</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-dark": "#1c2127",
+                        "surface-highlight": "#283039",
+                        "text-secondary": "#9dabb9",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for better aesthetic in dark mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101922; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b4754; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #506070; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white h-screen overflow-hidden flex">
+<!-- Sidebar -->
+<aside class="w-64 flex-shrink-0 flex flex-col justify-between bg-surface-dark border-r border-[#3b4754] h-full overflow-y-auto">
+<div class="flex flex-col gap-4 p-4">
+<!-- User/App Info -->
+<div class="flex gap-3 items-center mb-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Abstract gradient logo representing the Redmine App" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAdTl9hjGwOKjmPlhCgcX0GPmCnwOKWq9kBebjZfE6hIgzbKJ0apz8WlgDc_YqLOg14LZMHmNSRFIBm6LJfI4iI2ffITGy0F8zliEhjeCpN2p3e5ER69A_hYbATHTUyqJwrO8scE2z43HcFLB1NCmCB47tvhzv0qKXJfE7VA1sx2Cs2axXs8zurBaTUQORjl6NOSlNSnzO4kOoP8PGT_saYU7fO8wZxx_A0qjGlUUpvhYudXnzMCwhcZy50ijgs84VxcnNW5LMS2amD");'></div>
+<div class="flex flex-col">
+<h1 class="text-white text-base font-bold leading-normal">Redmine App</h1>
+<p class="text-text-secondary text-sm font-normal leading-normal">Project Manager</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-surface-highlight hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white">donut_small</span>
+<p class="text-sm font-medium leading-normal">總覽</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-primary fill-1">assignment</span>
+<p class="text-sm font-bold leading-normal">專案議題</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-surface-highlight hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white">schedule</span>
+<p class="text-sm font-medium leading-normal">工時填寫</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-surface-highlight hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white">file_download</span>
+<p class="text-sm font-medium leading-normal">工時匯入</p>
+</a>
+</nav>
+</div>
+<!-- Bottom Section (Optional User Profile or Settings) -->
+<div class="p-4 border-t border-[#3b4754]">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-surface-highlight hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white">settings</span>
+<p class="text-sm font-medium leading-normal">Settings</p>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full overflow-hidden relative">
+<!-- Sticky Header Area -->
+<header class="flex-shrink-0 bg-background-dark z-10 p-6 pb-2">
+<!-- Title and Primary Action -->
+<div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+<div class="flex flex-col gap-1">
+<h2 class="text-white tracking-tight text-[32px] font-bold leading-tight">Project Issues</h2>
+<p class="text-text-secondary text-sm font-normal leading-normal">Manage and track all issues for your selected project.</p>
+</div>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary hover:bg-primary/90 transition-colors text-white text-sm font-bold leading-normal shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px] mr-2">add</span>
+<span class="truncate">New Issue</span>
+</button>
+</div>
+<!-- Controls Row: Project Select + Search/Filters -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 border-b border-[#3b4754] pb-6">
+<!-- Project Selector -->
+<div class="flex flex-col w-full lg:w-1/3 max-w-sm">
+<label class="text-white text-sm font-medium leading-normal pb-2">Current Project</label>
+<div class="relative">
+<select class="form-input flex w-full appearance-none rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary border border-[#3b4754] bg-surface-dark h-10 pl-4 pr-10 text-sm font-medium leading-normal cursor-pointer hover:border-[#506070] transition-colors">
+<option value="one">Redmine App Redesign</option>
+<option value="two">Backend API Migration</option>
+<option value="three">Legacy System Maintenance</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-text-secondary">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Toolbar (Search & Filter) -->
+<div class="flex items-center gap-3">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+<span class="material-symbols-outlined text-text-secondary text-[20px]">search</span>
+</div>
+<input class="bg-surface-dark border border-[#3b4754] text-white text-sm rounded-lg focus:ring-primary focus:border-primary block w-64 pl-10 p-2.5 placeholder-text-secondary/70" placeholder="Search issues..." type="text"/>
+</div>
+<button class="p-2.5 rounded-lg border border-[#3b4754] bg-surface-dark text-white hover:bg-surface-highlight transition-colors tooltip" title="Filter">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+</button>
+<button class="p-2.5 rounded-lg border border-[#3b4754] bg-surface-dark text-white hover:bg-surface-highlight transition-colors tooltip" title="Sort">
+<span class="material-symbols-outlined text-[20px]">sort</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Scrollable Content Area -->
+<div class="flex-1 overflow-y-auto px-6 pb-6">
+<div class="rounded-lg border border-[#3b4754] bg-surface-dark overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#181d23] border-b border-[#3b4754]">
+<th class="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider w-24">ID</th>
+<th class="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider w-32">Tracker</th>
+<th class="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider w-32">Status</th>
+<th class="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider w-32">Priority</th>
+<th class="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider min-w-[300px]">Subject</th>
+<th class="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider w-20 text-center">Assignee</th>
+<th class="px-6 py-4 text-xs font-semibold text-text-secondary uppercase tracking-wider w-40 text-right">Updated</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#3b4754]">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-highlight/50 transition-colors group cursor-pointer">
+<td class="px-6 py-4 text-primary font-medium text-sm">#1024</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                        Feature
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                        New
+                                    </span>
+</td>
+<td class="px-6 py-4 text-text-secondary text-sm">Normal</td>
+<td class="px-6 py-4 text-white font-medium text-sm group-hover:text-primary transition-colors">
+                                    Implement Dark Mode toggle in settings
+                                </td>
+<td class="px-6 py-4 text-center">
+<div class="inline-block bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 h-8 ring-2 ring-background-dark" data-alt="Portrait of assignee John Doe" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCSeZP_bunaMKMdCtPDx03GQIlunsrPChRDO-pL-0HaBtWVBCzmOhXBpqQ2XMSuJ_9pOytXsqBzLtqoSo4Iy6G6U0u1QQPz52RVp01ZPdrlSHH09Zla7eRtczGLOWqiIbqSg1KVVfn6BJnkyeQP-bwOGWYTKWBadYvV-NsmwkgH_WLeY4dbDvY5HITBnsvlW277GVla12iL9QzEhYj0fICwqZYrK2LgkKZtLQDRt2GK1somt50D2IQNMuHbBYwPlNjPdDNBVBaa5mMK");'></div>
+</td>
+<td class="px-6 py-4 text-text-secondary text-sm text-right">2 hours ago</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-highlight/50 transition-colors group cursor-pointer">
+<td class="px-6 py-4 text-primary font-medium text-sm">#1023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                                        Bug
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                                        In Progress
+                                    </span>
+</td>
+<td class="px-6 py-4 text-rose-400 font-medium text-sm">High</td>
+<td class="px-6 py-4 text-white font-medium text-sm group-hover:text-primary transition-colors">
+                                    Fix Safari Login Issue on iOS 17
+                                </td>
+<td class="px-6 py-4 text-center">
+<div class="inline-block bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 h-8 ring-2 ring-background-dark" data-alt="Portrait of assignee Jane Smith" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD-xEhgDmRY8e1O4OfCfzvlfj3buTePmkb6omN9P9p9MGhGU0S2y7f-pygM7cJ2zl5Z1qevEzrT3x6nyXwPPLfhjeBfoBQWbOeWNralma-Z-A8DaRgVR3Orh80L0Sg_RiQnx0ahUieZ8G-CzTKbqLlu6QnaiUtsRAP94u4idv5CYqqJ-MvLvy41BusDstNutPnaEFFSFdtmdRg2-eGZuIykvLtgnhl9oIvkwrPsAEn7nAJ4bVFGtH51WrIY5l7meckWFiFEONQg4em0");'></div>
+</td>
+<td class="px-6 py-4 text-text-secondary text-sm text-right">Yesterday</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-highlight/50 transition-colors group cursor-pointer">
+<td class="px-6 py-4 text-primary font-medium text-sm">#1022</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                        Feature
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-500/10 text-gray-400 border border-gray-500/20">
+                                        Closed
+                                    </span>
+</td>
+<td class="px-6 py-4 text-text-secondary text-sm">Normal</td>
+<td class="px-6 py-4 text-white/60 line-through font-medium text-sm">
+                                    Update Sidebar Icons to Material Symbols
+                                </td>
+<td class="px-6 py-4 text-center">
+<div class="inline-block bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 h-8 ring-2 ring-background-dark" data-alt="Portrait of assignee Mike Johnson" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCTbTlZHnGfQnek1ZBO24j5s7i2wesOdIBoajLnbGYIcp1ujlhAe1lDeFy_cn6vpLhhy6S3rxnkkwhZ9H_Wq8ci72fOv9Md_7NKBoiBgd5gLotAhZVWYyrv_45WZTAQNZaxqqjCTITqtzI-45L-F2FjULTykQHojXGPqkAyj-hki3kmteDsR3xcR0NDCPexnCXm_oV2SZKjabsZSto-OXjv3w3BVUt3-c2wd_l-jdyrbWrK4cfQo5soSKdEO6tZUCCRLwPy9tJ-kaFU");'></div>
+</td>
+<td class="px-6 py-4 text-text-secondary text-sm text-right">2023-10-25</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-highlight/50 transition-colors group cursor-pointer">
+<td class="px-6 py-4 text-primary font-medium text-sm">#1021</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                                        Support
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                        New
+                                    </span>
+</td>
+<td class="px-6 py-4 text-text-secondary text-sm">Low</td>
+<td class="px-6 py-4 text-white font-medium text-sm group-hover:text-primary transition-colors">
+                                    Update User Documentation for v2.0
+                                </td>
+<td class="px-6 py-4 text-center">
+<div class="inline-block bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 h-8 ring-2 ring-background-dark" data-alt="Portrait of assignee Sarah Lee" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBSt2KJsO261gSUvcPmfxPCitPWNcyk41-nVMfpsQX2kJlEoIZLoJPN_yZQlz_ZGxFkTt7GG1NRXFlga0zKM4Gsxz_5-I7I4EnAGk0HeCdrVUp7dIYHuL7QafGDEkly596m7y43P63NJzddwhq-SqToKTPnURFbs9Nj2DxPWUkbrd8RRzKbftGMakBwS8VQ4WPt4zkzQbgnr6tCQtm2Fvpny_QCDaOzSK7HAGUa7cHCnKyNV2q8QQZHrj26L_AFXyNHynyaWJknQeO1");'></div>
+</td>
+<td class="px-6 py-4 text-text-secondary text-sm text-right">2023-10-24</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-highlight/50 transition-colors group cursor-pointer">
+<td class="px-6 py-4 text-primary font-medium text-sm">#1020</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                                        Bug
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                        Feedback
+                                    </span>
+</td>
+<td class="px-6 py-4 text-rose-500 font-bold text-sm">Urgent</td>
+<td class="px-6 py-4 text-white font-medium text-sm group-hover:text-primary transition-colors">
+                                    API 500 Error on checkout endpoint
+                                </td>
+<td class="px-6 py-4 text-center">
+<div class="inline-block bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 h-8 ring-2 ring-background-dark" data-alt="Portrait of assignee David Chen" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBF2Z1XHMt1pQumgFHb6-xESlEyZDt1Ytmu5MLUGtlTKtc1_GD8-a3eqDpcK3DbSnreyR1g2BbSwYYbwsxL2Fm__8-2-BU09NDm8Ijx7kvXC09NZqhdNz9OnNMcYZYZ7RIhOPigTms2neuYsuHb4ClBHILlw_dt0K70u1YGH-ooVl10IJsYHfzxbeMGwVt7Z91M-4SVrMYJxRolR6_vyhGMpboCE56JRg1o3AU-T2ju_NG-bdxifNbIb1Bh_WUW_ZwyZkha2bR66cmt");'></div>
+</td>
+<td class="px-6 py-4 text-text-secondary text-sm text-right">2023-10-23</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-surface-highlight/50 transition-colors group cursor-pointer">
+<td class="px-6 py-4 text-primary font-medium text-sm">#1019</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                        Feature
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                                        In Progress
+                                    </span>
+</td>
+<td class="px-6 py-4 text-text-secondary text-sm">Normal</td>
+<td class="px-6 py-4 text-white font-medium text-sm group-hover:text-primary transition-colors">
+                                    Integrate Stripe Payment Gateway
+                                </td>
+<td class="px-6 py-4 text-center">
+<div class="inline-block bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 h-8 ring-2 ring-background-dark" data-alt="Portrait of assignee John Doe" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuANcTAkRKGGfEAg7A_xzNdvdXuBYgZ-4NjouGJxYcKdE3XoXKEoI6X_sCC9UPRotaCGX0PrIcvFTWK2GozX8ER-z2cGgJIjzEbm9QyJFclYJAjbYBDAT_g9ESsrbY8VsYVOOF8oeVX0eVEWD4rNCrQLRSYVN1OzRFGVDXgFDDMd5k8UIGtHL5NB9PjLRgSUtkpS1dzIDqMxHLg1S7ZFMyt2Z3wt4l4YIsJcNibEWidBVmsuu2yNPCdRvG_l0dKi4R1-kqudIBjEfdH7");'></div>
+</td>
+<td class="px-6 py-4 text-text-secondary text-sm text-right">2023-10-22</td>
+</tr>
+<!-- Row 7 -->
+<tr class="hover:bg-surface-highlight/50 transition-colors group cursor-pointer">
+<td class="px-6 py-4 text-primary font-medium text-sm">#1018</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                                        Bug
+                                    </span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                        New
+                                    </span>
+</td>
+<td class="px-6 py-4 text-text-secondary text-sm">Normal</td>
+<td class="px-6 py-4 text-white font-medium text-sm group-hover:text-primary transition-colors">
+                                    Typography scaling issues on mobile
+                                </td>
+<td class="px-6 py-4 text-center">
+<div class="inline-block bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 h-8 ring-2 ring-background-dark" data-alt="Portrait of assignee Jane Smith" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC3lCKbiDJtBGobe7QfY1hkihxc9taESBZFLf-SuiDYSdisPOiwvQvpMwLddghUzkRYivUmQjt5hzB-Z8qJdbntlh4doM3Zf_1PwHcWujyeb4HQINQllL2PsHtMqdnbwmh6GkHEFvuVcu4CRrWMjeuHtbOnFjILnYn0rglo-S5VYwcLq5IqdG9qWaDgsEzkk75VFWcNdPJC5xizQjpLVZM7j3qTEq_4DnWH-J6fBisW7gIYb_4CHIiDBZGW3aK642_TkYFwAS4sB4EU");'></div>
+</td>
+<td class="px-6 py-4 text-text-secondary text-sm text-right">2023-10-22</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-between px-6 py-4 border-t border-[#3b4754]">
+<p class="text-sm text-text-secondary">
+                        Showing <span class="font-medium text-white">1</span> to <span class="font-medium text-white">7</span> of <span class="font-medium text-white">156</span> results
+                    </p>
+<nav class="flex gap-2">
+<button class="relative inline-flex items-center px-2 py-2 rounded-md border border-[#3b4754] bg-surface-dark text-sm font-medium text-text-secondary hover:bg-surface-highlight disabled:opacity-50">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="relative inline-flex items-center px-4 py-2 rounded-md bg-primary text-sm font-bold text-white">
+                            1
+                        </button>
+<button class="relative inline-flex items-center px-4 py-2 rounded-md border border-[#3b4754] bg-surface-dark text-sm font-medium text-text-secondary hover:bg-surface-highlight">
+                            2
+                        </button>
+<button class="relative inline-flex items-center px-4 py-2 rounded-md border border-[#3b4754] bg-surface-dark text-sm font-medium text-text-secondary hover:bg-surface-highlight">
+                            3
+                        </button>
+<span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-text-secondary">...</span>
+<button class="relative inline-flex items-center px-4 py-2 rounded-md border border-[#3b4754] bg-surface-dark text-sm font-medium text-text-secondary hover:bg-surface-highlight">
+                            12
+                        </button>
+<button class="relative inline-flex items-center px-2 py-2 rounded-md border border-[#3b4754] bg-surface-dark text-sm font-medium text-text-secondary hover:bg-surface-highlight">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</nav>
+</div>
+</div>
+</div>
+</main>
+</body></html>

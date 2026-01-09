@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Redmine Desktop - Project Management</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-dark": "#1c2630", 
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-white overflow-x-hidden transition-colors duration-200">
+<div class="relative flex min-h-screen w-full flex-col group/design-root">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Navigation -->
+<div class="w-full flex justify-center sticky top-0 z-50 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="layout-content-container flex flex-col max-w-[1200px] flex-1">
+<header class="flex items-center justify-between whitespace-nowrap px-4 py-4 lg:px-10">
+<div class="flex items-center gap-3 text-slate-900 dark:text-white">
+<div class="size-8 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined !text-3xl">grid_view</span>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Redmine</h2>
+</div>
+<div class="hidden lg:flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-8">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Features</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Pricing</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Download</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Support</a>
+</div>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary hover:bg-primary/90 transition-colors text-white text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Sign In</span>
+</button>
+</div>
+<div class="lg:hidden">
+<button class="text-slate-900 dark:text-white p-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</header>
+</div>
+</div>
+<div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col max-w-[1200px] flex-1 gap-12">
+<!-- Hero Section -->
+<div class="@container">
+<div class="flex flex-col-reverse gap-8 py-10 lg:gap-16 lg:flex-row lg:items-center">
+<!-- Hero Content -->
+<div class="flex flex-col gap-6 lg:w-1/2 justify-center">
+<div class="flex flex-col gap-4 text-left">
+<h1 class="text-4xl font-extrabold leading-tight tracking-[-0.033em] lg:text-5xl lg:leading-[1.1]">
+                                        Master Your Projects with <span class="text-primary">Redmine Desktop</span>
+</h1>
+<h2 class="text-slate-500 dark:text-slate-400 text-lg font-normal leading-relaxed">
+                                        Efficient time tracking, issue management, and agile planning tools designed for desktop performance.
+                                    </h2>
+</div>
+<div class="flex flex-wrap gap-4 mt-2">
+<button class="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-primary hover:bg-primary/90 transition-all text-white text-base font-bold shadow-lg shadow-primary/25">
+<span class="mr-2">Download Now</span>
+<span class="material-symbols-outlined !text-xl">download</span>
+</button>
+<button class="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-slate-200 dark:bg-surface-dark hover:bg-slate-300 dark:hover:bg-[#25303d] transition-all text-slate-900 dark:text-white text-base font-bold">
+<span class="mr-2">View Demo</span>
+<span class="material-symbols-outlined !text-xl">play_arrow</span>
+</button>
+</div>
+</div>
+<!-- Hero Image -->
+<div class="w-full lg:w-1/2">
+<div class="w-full aspect-[4/3] bg-gradient-to-br from-surface-dark to-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden relative group">
+<!-- Abstract Dashboard Representation -->
+<div class="absolute inset-0 bg-cover bg-center opacity-90 transition-transform duration-700 group-hover:scale-105" data-alt="Dashboard interface displaying data analytics charts and graphs" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB29WJJZIoU1bvAIjI_m2iCpDk_jYcXzXRd327rBOXsKh2PiESDouG8lCiynk3TiA8v9Di4EcNqvavnGAq9FVZUDRzEZZQ7nRDkX-IJmxEQfMRhc505NAErKCFKXSGJJfaWy-ZiZ1RnLSghS3qR2Zcs5hJkW87sAs4O3ub8LArGNGP0PBO_BJr3y3FOMKphDGzt0uVrj3q3sMj1XKnCm_T2XtNwI_RQfk2WalEIyFK6qmMYXaB75At60mwEMZhEPP9Bs5htTqnVztib");'>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent opacity-60"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Stats Section -->
+<div class="flex flex-col gap-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="flex flex-col gap-2 rounded-xl p-8 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-primary/10 rounded-lg text-primary">
+<span class="material-symbols-outlined">group</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider">Active Users</p>
+</div>
+<p class="text-4xl font-black tracking-tight mt-2">100k+</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-8 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-primary/10 rounded-lg text-primary">
+<span class="material-symbols-outlined">folder_managed</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider">Projects Managed</p>
+</div>
+<p class="text-4xl font-black tracking-tight mt-2">500k+</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-8 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-primary/10 rounded-lg text-primary">
+<span class="material-symbols-outlined">cloud_download</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider">Downloads</p>
+</div>
+<p class="text-4xl font-black tracking-tight mt-2">1M+</p>
+</div>
+</div>
+</div>
+<!-- Features Section -->
+<div class="flex flex-col gap-10 py-12">
+<div class="flex flex-col gap-4 text-center md:text-left">
+<h2 class="text-3xl md:text-4xl font-bold leading-tight">
+                                Key Capabilities
+                            </h2>
+<p class="text-slate-500 dark:text-slate-400 text-lg max-w-[720px]">Everything you need to manage complex projects effectively without the clutter.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Feature 1 -->
+<div class="group flex flex-col gap-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark p-8 hover:border-primary/50 transition-colors">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined !text-3xl">bug_report</span>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="text-xl font-bold">Issue Tracking</h3>
+<p class="text-slate-500 dark:text-slate-400 leading-relaxed">Manage tasks, bugs, and feature requests with precision filters and custom workflows.</p>
+</div>
+</div>
+<!-- Feature 2 -->
+<div class="group flex flex-col gap-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark p-8 hover:border-primary/50 transition-colors">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined !text-3xl">timer</span>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="text-xl font-bold">Time Tracking</h3>
+<p class="text-slate-500 dark:text-slate-400 leading-relaxed">Log hours effortlessly against specific issues or projects. Generate detailed time reports.</p>
+</div>
+</div>
+<!-- Feature 3 -->
+<div class="group flex flex-col gap-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark p-8 hover:border-primary/50 transition-colors">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined !text-3xl">calendar_month</span>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="text-xl font-bold">Gantt &amp; Calendar</h3>
+<p class="text-slate-500 dark:text-slate-400 leading-relaxed">Visualize your project roadmap and deadlines. Drag and drop to reschedule instantly.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="flex flex-col gap-8 py-10 border-t border-slate-200 dark:border-slate-800 mt-10">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-500">grid_view</span>
+<span class="font-bold text-lg">Redmine Desktop</span>
+</div>
+<div class="flex gap-4">
+<a class="p-2 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">public</span>
+</a>
+<a class="p-2 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">code</span>
+</a>
+<a class="p-2 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">groups</span>
+</a>
+</div>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-y-4 gap-x-8 text-sm md:justify-items-center">
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">Download</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">Changelog</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">Source Code</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">Guide</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">API</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">Plugins</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+<div class="text-center">
+<p class="text-slate-400 text-sm font-medium">© 2024 Redmine Desktop. All rights reserved.</p>
+</div>
+</footer>
+</div>
+</div>
+</div>
+</div>
+</body></html>

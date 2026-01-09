@@ -1,0 +1,36 @@
+[package]
+name = "my-tauri-redmine"
+version = "0.1.0"
+description = "A Tauri App"
+authors = ["you"]
+edition = "2021"
+
+# 請參考 https://doc.rust-lang.org/cargo/reference/manifest.html 查看更多定義
+
+[lib]
+# `_lib` 後綴看似多餘，但為了確保函式庫名稱唯一且不與執行檔名稱衝突是必須的。
+# 這似乎只在 Windows 上會有問題，詳見 https://github.com/rust-lang/cargo/issues/8519
+name = "my_tauri_redmine_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2" # 用於開啟外部連結或檔案的 Tauri 插件
+serde = { version = "1", features = ["derive"] } # 用於資料序列化與反序列化
+serde_json = "1" # 用於 JSON 處理
+reqwest = { version = "0.12", features = [
+  "json",
+  "blocking",
+] } # HTTP 客戶端，用於發送 API 請求 (這裡啟用 json 與 blocking 特性)
+aes-gcm = "0.10" # AES-GCM 加密演算法，用於 API Key 加密
+base64 = "0.22" # Base64 編碼，用於處理加密後的資料
+rand = "0.8" # 隨機數生成，用於產生加密所需的 Nonce
+chrono = "0.4.42"
+tauri-plugin-process = "2"
+tauri-plugin-dialog = "2"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-updater = "2"

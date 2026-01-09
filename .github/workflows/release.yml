@@ -2,49 +2,67 @@ name: Release
 on:
   push:
     tags:
-      - "v*" # 當你 push v0.1.0 這樣的 tag 時觸發
+      - "v*" # 當 push 的 tag 是 v 開頭 (例如 v0.1.0) 時觸發此流程
 
 jobs:
   publish-tauri:
     permissions:
-      contents: write
+      contents: write # 允許 Action 寫入 Release 內容
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest] # 只有 Windows 版本，若有 Mac/Linux 可加
+        platform: [windows-latest] # 指定執行平台 (目前只設定 Windows)
     runs-on: ${{ matrix.platform }}
     steps:
+      # 1. 檢出程式碼
       - uses: actions/checkout@v4
 
+      # 2. 設定 Node.js 環境 (使用最新的 LTS 版本)
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
+      # 3. 設定 Bun 環境 (因為本專案使用 Bun 作為套件管理器)
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
 
+      # 4. 安裝 Rust 編譯器 (使用 stable 版本)
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
+      # 5. Rust 快取 (加速編譯)
+      # 這會快取 target/ 資料夾，下次編譯時若依賴沒變，速度會快很多
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      # 6. 安裝 Ubuntu 必要的系統依賴 (僅在 Linux 平台執行，Windows 會跳過)
       - name: Install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
 
+      # 7. 安裝前端依賴套件 (使用 bun install)
       - name: Install frontend dependencies
         run: bun install
 
+      # 8. 打包並上傳 Release
+      # 這是 Tauri 官方 Action，會自動執行 tauri build 並簽署
       - name: Build and upload
         uses: tauri-apps/tauri-action@v0
         env:
+          # GitHub Token (自動產生，用於上傳 Release)
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # 私鑰 (需在 Repo Settings > Secrets 手動設定)
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          # 私鑰密碼 (如果有設密碼才需要)
           TAURI_SIGNING_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_KEY_PASSWORD }}
         with:
-          tagName: app-v__VERSION__ # 自動用 tag name 建立 Release
-          releaseName: "App v__VERSION__"
-          releaseBody: "See the assets to download this version and install."
-          releaseDraft: true
+          tagName: app-v__VERSION__ # Release Tag 名稱格式
+          releaseName: "App v__VERSION__" # Release 標題格式
+          releaseBody: "See the assets to download this version and install." # Release 內容說明
+          releaseDraft: true # 是否設為草稿 (建議 true，確認沒問題再手動 Publish)
           prerelease: false

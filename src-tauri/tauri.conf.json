@@ -41,7 +41,9 @@
   "plugins": {
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDZBQkI3RDdCNTJCOTgzRjIKUldUeWc3bFNlMzI3YW10elhwYm4zWjBLOWYvUmQ3U1JJbDVIMDNpUG5TV2FNUXJaK1d2ZHIybTEK",
-      "endpoints": ["https://example.com/update.json"]
+      "endpoints": [
+        "https://filedn.eu/l2hWWRTMACJms0Tw2qwPeBm/RedmineDashboard/update.json"
+      ]
     }
   }
 }

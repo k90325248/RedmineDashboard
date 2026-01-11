@@ -36,7 +36,8 @@
     ],
     "publisher": "k90325248",
     "copyright": "Copyright © 2026",
-    "shortDescription": "A Redmine Dashboard for tracking issues and time."
+    "shortDescription": "A Redmine Dashboard for tracking issues and time.",
+    "createUpdaterArtifacts": true
   },
   "plugins": {
     "updater": {

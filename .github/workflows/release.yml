@@ -52,7 +52,7 @@ jobs:
       # 8. 打包並上傳 Release
       # 這是 Tauri 官方 Action，會自動執行 tauri build 並簽署
       - name: Build and upload
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v0.6.1
         env:
           # GitHub Token (自動產生，用於上傳 Release)
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

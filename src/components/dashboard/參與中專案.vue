@@ -21,29 +21,58 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { invoke } from "@tauri-apps/api/core";
-import { useUserStore } from "@/stores/user";
-
-const userStore = useUserStore();
+import { api } from "@/utils/api";
 
 const count = ref(0);
 const loading = ref(true);
 
-onMounted(() => {
-  const host = userStore.host;
-  const apiKey = userStore.apiKey;
+onMounted(async () => {
+  loading.value = true;
+  try {
+    // 1. 取得使用者參與的專案 (Memberships)
+    const userRes = await api.getCurrentUser("memberships");
+    if (!userRes.success || !userRes.data?.memberships) {
+      console.error("Failed to fetch user memberships:", userRes.error);
+      loading.value = false;
+      return;
+    }
 
-  if (host && apiKey) {
-    invoke<number>("dashboard_get_project_count", { host, apiKey })
-      .then((res) => {
-        count.value = res;
-        loading.value = false;
-      })
-      .catch((err) => {
-        console.error("Failed to fetch project count:", err);
-        loading.value = false;
-      });
-  } else {
+    const myProjectIds = new Set(
+      userRes.data.memberships.map((m) => m.project.id)
+    );
+    console.log(
+      `[ProjectCount] My Memberships Count: ${myProjectIds.size}`,
+      myProjectIds
+    );
+
+    // 2. 取得所有啟用中的專案
+    const projectsRes = await api.getAllActiveProjects();
+    if (!projectsRes.success || !projectsRes.data) {
+      console.error("Failed to fetch all active projects:", projectsRes.error);
+      loading.value = false;
+      return;
+    }
+
+    // 3. 取交集：(我的會員專案) ∩ (所有啟用中專案)
+    // Redmine 的 /users/current.json?include=memberships 回傳的專案可能包含已關閉的
+    // 所以需要跟 active projects 做交集
+    const activeProjectIds = new Set(projectsRes.data.map((p) => p.id));
+    console.log(
+      `[ProjectCount] All Active Projects Count: ${activeProjectIds.size}`
+    );
+
+    let activeCount = 0;
+    myProjectIds.forEach((id) => {
+      if (activeProjectIds.has(id)) {
+        activeCount++;
+      }
+    });
+
+    console.log(`[ProjectCount] Calculated Intersection: ${activeCount}`);
+    count.value = activeCount;
+  } catch (err) {
+    console.error("Error in ProjectCount:", err);
+  } finally {
     loading.value = false;
   }
 });

@@ -1,5 +1,5 @@
 <template>
-  <UApp>
+  <UApp :toaster="toaster">
     <component :is="layout">
       <RouterView />
     </component>
@@ -20,6 +20,8 @@ const route = useRoute();
 const layout = computed(() => {
   return route.meta.layout === "login" ? LoginLayout : DefaultLayout;
 });
+
+const toaster = { position: "top-center" };
 
 onMounted(async () => {
   // 檢查更新

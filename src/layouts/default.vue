@@ -124,5 +124,11 @@ const items: NavigationMenuItem[] = [
 const handleLogout = () => {
   userStore.logout();
   router.push("/");
+  useToast().add({
+    color: "success",
+    icon: "material-symbols:check-circle",
+    title: "已登出",
+    duration: 3000,
+  });
 };
 </script>

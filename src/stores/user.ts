@@ -1,4 +1,16 @@
 import { defineStore } from "pinia";
+import { fetch } from "@tauri-apps/plugin-http";
+
+interface UserData {
+  id: number;
+  login: string;
+  firstname: string;
+  lastname: string;
+  mail: string;
+  created_on: string;
+  last_login_on: string;
+  api_key?: string;
+}
 
 export const useUserStore = defineStore("user", {
   /** store 的狀態 */
@@ -34,6 +46,11 @@ export const useUserStore = defineStore("user", {
       }
       this.apiKey = localStorage.getItem("apiKey") || "";
     },
+    /** 更新 Host */
+    updateHost(host: string) {
+      localStorage.setItem("host", host);
+      this.host = host;
+    },
     /** 初始化使用者 (嘗試還原 Session) */
     async initUser(): Promise<boolean> {
       // 若已有資料則不需重抓
@@ -41,42 +58,42 @@ export const useUserStore = defineStore("user", {
       // 沒有 API Key 則不需重抓
       if (!this.apiKey) return false;
 
-      // 這裡暫時 hardcode host (理想上應該也要存 host)
-      // TODO: 將 host 也存入 localStorage
-      const host = this.host;
-      console.log({
-        host,
-        encrypted_api_key: this.apiKey,
-      });
+      const host = this.host.replace(/\/$/, "");
+
       try {
-        const { invoke } = await import("@tauri-apps/api/core");
-        // 呼叫後端 redmine_restore_session
-        const result = await invoke<ApiUserResult>("redmine_restore_session", {
-          host,
-          encryptedApiKey: this.apiKey,
+        const url = `${host}/users/current.json`;
+        console.log("Restoring session from:", url);
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "X-Redmine-API-Key": this.apiKey,
+          },
         });
 
-        if (result.success && result.data) {
-          this.setUserDate(result.data.user_data);
-          this.updateApiKey(result.data.api_key);
+        if (response.ok) {
+          const data = (await response.json()) as { user: UserData };
+          // 保留原本的 API Key (因為 /users/current.json 回傳的資料可能不包含 api_key)
+          const userData = { ...data.user, api_key: this.apiKey };
 
-          // 登入成功
+          this.setUserDate(userData);
+
           useToast().add({
             color: "success",
             icon: "material-symbols:check-circle",
-            title: "登入成功!",
+            title: "歡迎回來!",
+            description: `${userData.lastname}${userData.firstname}`,
             duration: 3000,
           });
-
           return true;
         } else {
-          console.warn("Session restore failed:", result.error);
-          this.updateApiKey();
+          console.warn("Session restore failed:", response.status);
+          // Key 可能失效，但不一定要馬上清除，讓使用者決定是否要重登
+          // this.logout();
           return false;
         }
       } catch (err) {
         console.error("Session restore error:", err);
-        this.updateApiKey();
         return false;
       }
     },

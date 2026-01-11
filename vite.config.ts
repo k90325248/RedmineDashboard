@@ -11,9 +11,6 @@ export default defineConfig(async () => ({
     vue(),
     ui({
       ui: {
-        toaster: {
-          defaultVariants: { position: "top-center" },
-        },
         colors: { primary: "blue", neutral: "slate" },
       },
     }),

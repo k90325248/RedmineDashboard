@@ -34,7 +34,6 @@ export default async (
   const limit = 100;
   let offset = 0;
   let allProjects: RedmineProject[] = [];
-  let totalCount = 0;
 
   while (true) {
     const result = await getProjects({ ...params, limit, offset });
@@ -45,7 +44,6 @@ export default async (
 
     const { projects, total_count } = result.data;
     allProjects = allProjects.concat(projects);
-    totalCount = total_count;
 
     if (offset + projects.length >= total_count) {
       break;

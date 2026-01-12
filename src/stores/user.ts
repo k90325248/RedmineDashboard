@@ -1,22 +1,14 @@
-import { defineStore } from "pinia";
-import { fetch } from "@tauri-apps/plugin-http";
+import type { RedmineUser } from "@/types/Redmine";
 
-interface UserData {
-  id: number;
-  login: string;
-  firstname: string;
-  lastname: string;
-  mail: string;
-  created_on: string;
-  last_login_on: string;
-  api_key?: string;
-}
+import { defineStore } from "pinia";
+import getUsersCurrent from "@/utils/redmine/getUsersCurrent";
+import { useToast } from "@nuxt/ui/composables";
 
 export const useUserStore = defineStore("user", {
   /** store 的狀態 */
   state: () => ({
     /** 使用者資料 */
-    userData: null as UserData | null,
+    userData: null as RedmineUser | null,
     /** 使用者 API Key */
     apiKey: localStorage.getItem("apiKey") || "",
     /** Redmine Host URL */
@@ -34,7 +26,7 @@ export const useUserStore = defineStore("user", {
   /** store 的行為 */
   actions: {
     /** 設定使用者資料 */
-    setUserDate(userData: UserData | null) {
+    setUserDate(userData: RedmineUser | null) {
       this.userData = userData;
     },
     /** 更新使用者 API Key */
@@ -58,36 +50,25 @@ export const useUserStore = defineStore("user", {
       // 沒有 API Key 則不需重抓
       if (!this.apiKey) return false;
 
-      const host = this.host.replace(/\/$/, "");
-
       try {
-        const url = `${host}/users/current.json`;
-        console.log("Restoring session from:", url);
+        // 取得使用者資料
+        const result = await getUsersCurrent({});
 
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "X-Redmine-API-Key": this.apiKey,
-          },
-        });
-
-        if (response.ok) {
-          const data = (await response.json()) as { user: UserData };
-          // 保留原本的 API Key (因為 /users/current.json 回傳的資料可能不包含 api_key)
-          const userData = { ...data.user, api_key: this.apiKey };
-
+        if (result.success) {
+          const userData = result.data;
+          // 儲存使用者資料
           this.setUserDate(userData);
-
+          // 顯示歡迎訊息
           useToast().add({
             color: "success",
             icon: "material-symbols:check-circle",
             title: "歡迎回來!",
-            description: `${userData.lastname}${userData.firstname}`,
+            description: `${userData.firstname}`,
             duration: 3000,
           });
           return true;
         } else {
-          console.warn("Session restore failed:", response.status);
+          console.warn("Session restore failed:", result.error);
           // Key 可能失效，但不一定要馬上清除，讓使用者決定是否要重登
           // this.logout();
           return false;

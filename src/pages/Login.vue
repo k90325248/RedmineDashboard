@@ -214,8 +214,8 @@ import type { TabsItem } from "@nuxt/ui";
 import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user";
-import { fetch } from "@tauri-apps/plugin-http";
 import * as v from "valibot";
+import getUsersCurrent from "@/utils/redmine/getUsersCurrent";
 
 const HOST = "https://redmine01.mitac.com.tw";
 const loading = ref(false);
@@ -272,13 +272,11 @@ const apiKeyState = reactive({ host: HOST, apiKey: "" });
 
 // 帳號密碼登入
 const onSubmitCredentialsLogin = async () => {
-  console.log("Credentials Login attempt:", credentialsState);
   await handleLogin(credentialsState, "credentials");
 };
 
 // API Key 登入
 const onSubmitApiKeyLogin = async () => {
-  console.log("API Key Login attempt:", apiKeyState);
   await handleLogin(apiKeyState, "apikey");
 };
 
@@ -287,100 +285,87 @@ const handleLogin = async (
   state: CredentialsSchema | ApiKeySchema,
   type: "credentials" | "apikey"
 ) => {
-  loading.value = true;
-  const host = state.host.replace(/\/$/, "");
-  const url = `${host}/users/current.json`;
-
-  // 更新 Host (雖然這個頁面目前是固定，但為了未來彈性)
-  userStore.updateHost(host);
-
-  let headers: HeadersInit = {};
-
-  if (type === "credentials") {
-    // Basic Auth
-    const creds = state as CredentialsSchema;
-    const auth = btoa(`${creds.username}:${creds.password}`);
-    headers = {
-      Authorization: `Basic ${auth}`,
-    };
-  } else {
-    // API Key
-    const keyState = state as ApiKeySchema;
-    headers = {
-      "X-Redmine-API-Key": keyState.apiKey,
-    };
-  }
-
   try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers,
-    });
+    loading.value = true;
 
-    if (response.ok) {
-      const data = (await response.json()) as { user: any };
-      console.log("Login Successful!", data);
+    // 更新 Host (雖然這個頁面目前是固定，但為了未來彈性)
+    userStore.updateHost(state.host.replace(/\/$/, ""));
 
-      // 如果是帳號密碼登入，我們需要 API Key 來做後續操作
-      // Redmine /users/current.json 回傳的資料中，必須要有 api_key 欄位
-      // 這需要使用者在 Redmine 個人設定頁面開啟 "Show API key" 或管理者權限
-      // 如果沒有回傳 api_key，我們可能需要提示使用者改用 API Key 登入，或是在這裡做一些處理
-      // 但大多數 Redmine 設定若是允許 Rest API，current user 應該會回傳 api_key
+    // 請求標頭
+    const headers: Record<string, string> = {};
+    if (type === "credentials") {
+      // Basic Auth
+      const creds = state as CredentialsSchema;
+      const auth = btoa(`${creds.username}:${creds.password}`);
+      headers["Authorization"] = `Basic ${auth}`;
+    } else {
+      // API Key
+      const keyState = state as ApiKeySchema;
+      headers["X-Redmine-API-Key"] = keyState.apiKey;
+    }
 
-      let apiKey = "";
-      if (type === "apikey") {
-        apiKey = (state as ApiKeySchema).apiKey;
-      } else if (data.user.api_key) {
-        apiKey = data.user.api_key;
-      } else {
-        // Fallback: 如果用帳號密碼登入但沒拿到 API Key，這是個問題
-        // 因為後續 API 請求我們都改用 X-Redmine-API-Key 了
-        throw new Error(
-          "無法取得 API Key，請改用 API Key 方式登入，或確認 Redmine 帳號設定。"
-        );
+    // 執行請求
+    const result = await getUsersCurrent({ headers });
+
+    // 檢查請求結果
+    if (result.success) {
+      const data = result.data;
+
+      // 沒有 API Key 代表登入失敗
+      if (!data.api_key) {
+        // 錯誤提示
+        toast.add({
+          color: "error",
+          icon: "material-symbols:error",
+          title: "無法取得 API Key",
+          description: "成功登入，但無法取得 API Key，請洽系統管理員。",
+        });
+        return;
       }
-
-      const userData = { ...data.user, api_key: apiKey };
-
+      // 登入成功
       toast.add({
         color: "success",
         icon: "material-symbols:check-circle",
         title: "登入成功!",
         duration: 3000,
       });
-
-      userStore.setUserDate(userData);
-      userStore.updateApiKey(apiKey);
+      // 更新使用者資料
+      userStore.setUserDate(data);
+      // 更新 API Key
+      userStore.updateApiKey(data.api_key);
+      // 跳轉到 Dashboard
       router.push({ name: "Dashboard" });
     } else {
-      const status = response.status;
-      let title = "登入失敗";
-      let description = `伺服器回應錯誤 (Status: ${status})`;
+      // 登入失敗
+      const { code, message } = result.error;
 
-      if (status === 401) {
-        title = "驗證失敗";
-        description = "帳號密碼或 API Key 錯誤";
+      const toastMsg = { title: "登入失敗", description: message };
+
+      if (code === 401) {
+        toastMsg.title = "驗證失敗";
+        toastMsg.description = "帳號密碼或 API Key 錯誤";
       }
-
+      // 清除 API Key
       userStore.updateApiKey();
+      // 清除使用者資料
+      userStore.setUserDate(null);
+      // 顯示錯誤
       toast.add({
         color: "error",
         icon: "material-symbols:error",
-        title,
-        description,
+        ...toastMsg,
       });
     }
-  } catch (err: unknown) {
-    console.error("Login error:", err);
-    userStore.updateApiKey();
+  } catch (error) {
+    console.error("[Login] 登入失敗", error);
     toast.add({
       color: "error",
       icon: "material-symbols:error",
-      title: "連線錯誤",
-      description:
-        err instanceof Error ? err.message : "無法連線至 Redmine 主機",
+      title: "登入失敗",
+      description: "發生未預期錯誤，請洽系統管理員。",
     });
   } finally {
+    // 關閉載入中
     loading.value = false;
   }
 };

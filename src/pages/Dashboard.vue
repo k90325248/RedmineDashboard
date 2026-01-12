@@ -22,65 +22,13 @@
       <!-- 參與中專案 -->
       <ParticipatingProjects />
     </div>
-    <!-- Charts Row -->
+    <!-- 圖表區塊 -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Time Tracking Chart -->
-      <UCard class="lg:col-span-2">
-        <template #header>
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-lg font-bold text-gray-900 dark:text-white">
-                Weekly Time Distribution
-              </h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">
-                Hours logged per day vs scheduled
-              </p>
-            </div>
-            <USelect
-              :options="['This Week', 'Last Week']"
-              model-value="This Week"
-              variant="none"
-            />
-          </div>
-        </template>
-
-        <!-- Custom CSS Bar Chart -->
-        <div
-          class="h-64 w-full flex items-end justify-between gap-2 sm:gap-4 px-2"
-        >
-          <div
-            v-for="(day, index) in chartData"
-            :key="index"
-            class="flex flex-col items-center gap-2 flex-1 group"
-            :class="{ 'opacity-50': day.isWeekend }"
-          >
-            <div
-              class="relative w-full max-w-[40px] bg-gray-100 dark:bg-gray-800 rounded-t-lg h-48 flex items-end overflow-hidden"
-            >
-              <div
-                class="w-full transition-all duration-300 rounded-t-lg relative"
-                :class="
-                  day.isWeekend
-                    ? 'bg-gray-400/50 group-hover:bg-gray-400'
-                    : 'bg-primary/80 group-hover:bg-primary'
-                "
-                :style="{ height: day.height }"
-              >
-                <div
-                  v-if="!day.isWeekend"
-                  class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  {{ day.value }}
-                </div>
-              </div>
-            </div>
-            <span class="text-xs font-medium text-gray-500">{{
-              day.label
-            }}</span>
-          </div>
-        </div>
-      </UCard>
-      <!-- Status Donut Chart -->
+      <!-- 本週累計工時 -->
+      <ThisWeekTimeStacked />
+      <!-- 本週專案議題 -->
+      <!-- <ThisWeekIssue /> -->
+      <!-- 專案議題狀態 -->
       <UCard class="flex flex-col">
         <template #header>
           <h3 class="text-lg font-bold text-gray-900 dark:text-white">
@@ -466,20 +414,12 @@ import ThisWeekTime from "@/components/dashboard/本週累計工時.vue";
 import OverdueTask from "@/components/dashboard/逾期任務.vue";
 import ParticipatingProjects from "@/components/dashboard/參與中專案.vue";
 
+import ThisWeekTimeStacked from "@/components/dashboard/本周每日各專案堆疊圖.vue";
+
 import { useUserStore } from "@/stores/user";
 import { computed } from "vue";
 
 const userStore = useUserStore();
 
 const userData = computed(() => userStore.userData!);
-
-const chartData = [
-  { label: "Mon", value: "5.2h", height: "65%", isWeekend: false },
-  { label: "Tue", value: "6.8h", height: "85%", isWeekend: false },
-  { label: "Wed", value: "3.5h", height: "45%", isWeekend: false },
-  { label: "Thu", value: "7.5h", height: "95%", isWeekend: false },
-  { label: "Fri", value: "6.0h", height: "75%", isWeekend: false },
-  { label: "Sat", value: "0h", height: "0%", isWeekend: true },
-  { label: "Sun", value: "0h", height: "0%", isWeekend: true },
-];
 </script>

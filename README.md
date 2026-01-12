@@ -99,3 +99,21 @@ git push origin --delete v0.0.1
 - [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
 - [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode)
 - [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+
+## 版本紀錄 (Changelog)
+
+### v0.2.1
+
+- **Dashboard 重構**：
+  - 全面導入 `dayjs` 處理日期運算，提升準確度。
+  - 使用 `lodash` 優化資料處理邏輯。
+  - 新增「本周每日各專案堆疊圖」，使用 `echarts` 視覺化呈現每日工時分佈。
+  - 修復 `待處理議題` 與 `逾期任務` 中因相對日期 (e.g. `t-7d`) 導致的 API 422 錯誤，改採日期實算。
+- **API Utilities 優化**：
+  - 重構 `crosFetch`，統一 API 請求處理與錯誤回報。
+  - 新增 `getUsersCurrent`, `getProjects` (支援自動分頁), `getAllActiveProjects`, `getTimeEntries` 等工具函式。
+- **UI/UX 改進**：
+  - 登入頁面整合新的 `crosFetch`，提供更詳細的錯誤回饋。
+  - 專案名稱格式化 (去除前綴編號)。
+- **系統更新**：
+  - 升級 `tauri`, `vue`, `echarts` 等依賴版本。

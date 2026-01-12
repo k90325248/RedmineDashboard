@@ -14,25 +14,25 @@ const routes: Array<RouteRecordRaw> = [
     path: "/dashboard",
     name: "Dashboard",
     component: () => import("../pages/Dashboard.vue"),
-    meta: { requiresAuth: true, title: "總覽" },
+    meta: { layout: "dashboard", requiresAuth: true, title: "總覽" },
   },
   {
     path: "/project-issues",
     name: "ProjectIssues",
     component: () => import("../pages/ProjectIssues.vue"),
-    meta: { requiresAuth: true, title: "專案議題" },
+    meta: { layout: "dashboard", requiresAuth: true, title: "專案議題" },
   },
   {
     path: "/work-time",
     name: "WorkTime",
     component: () => import("../pages/WorkTime.vue"),
-    meta: { requiresAuth: true, title: "工時填寫" },
+    meta: { layout: "dashboard", requiresAuth: true, title: "工時填寫" },
   },
   {
     path: "/work-time-import",
     name: "WorkTimeImport",
     component: () => import("../pages/WorkTimeImport.vue"),
-    meta: { requiresAuth: true, title: "工時匯入" },
+    meta: { layout: "dashboard", requiresAuth: true, title: "工時匯入" },
   },
 ];
 

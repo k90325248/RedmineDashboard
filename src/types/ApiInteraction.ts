@@ -1,20 +1,26 @@
 /** API 交互錯誤 */
 export interface ApiErrorData {
+  /** 錯誤代碼 */
+  code: number;
   /** 錯誤標題 */
-  title: string;
-  /** 錯誤描述 */
-  description?: string;
+  message: string;
 }
 
-/** API 回傳資訊 */
-export interface ApiReturnData<T> {
+/** API 回傳錯誤 */
+export interface ApiReturnErrorData<T> {
   /** API 交互成功 */
-  success: boolean;
+  success: false;
   /** API 交互資料 */
   data?: T;
   /** API 交互錯誤 */
-  error?: ApiErrorData;
+  error: ApiErrorData;
+}
+/** API 回傳成功 */
+export interface ApiReturnSuccessData<T> {
+  /** API 交互成功 */
+  success: true;
+  /** API 交互資料 */
+  data: T;
 }
 
-/** API 使用者資訊回傳 */
-export type ApiUserResult = ApiReturnData<{ user_data: any; api_key: string }>;
+export type ApiReturnData<T> = ApiReturnSuccessData<T> | ApiReturnErrorData<T>;

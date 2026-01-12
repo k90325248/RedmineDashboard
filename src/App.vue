@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import DefaultLayout from "./layouts/default.vue";
+import DashboardLayout from "./layouts/dashboard.vue";
 import LoginLayout from "./layouts/login.vue";
 import { check } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
@@ -18,7 +18,14 @@ import { confirm } from "@tauri-apps/plugin-dialog";
 const route = useRoute();
 
 const layout = computed(() => {
-  return route.meta.layout === "login" ? LoginLayout : DefaultLayout;
+  switch (route.meta.layout) {
+    case "login":
+      return LoginLayout;
+    case "dashboard":
+      return DashboardLayout;
+    default:
+      return "div";
+  }
 });
 
 const toaster = { position: "top-center" };

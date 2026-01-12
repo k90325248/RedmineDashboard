@@ -11,11 +11,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    '本周每日各專案堆疊圖': typeof import('./src/components/dashboard/本周每日各專案堆疊圖.vue')['default']
     '本週累計工時': typeof import('./src/components/dashboard/本週累計工時.vue')['default']
     '待處理議題': typeof import('./src/components/dashboard/待處理議題.vue')['default']
     '待處理議題_old': typeof import('./src/components/dashboard/待處理議題_old.vue')['default']
     '參與中專案': typeof import('./src/components/dashboard/參與中專案.vue')['default']
     '逾期任務': typeof import('./src/components/dashboard/逾期任務.vue')['default']
+    Chart: typeof import('./src/components/form/Chart.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SideMenu: typeof import('./src/components/SideMenu.vue')['default']

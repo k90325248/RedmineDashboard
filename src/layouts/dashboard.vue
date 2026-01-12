@@ -2,9 +2,9 @@
   <UDashboardGroup>
     <UDashboardSidebar
       mode="slideover"
-      :default-size="22"
-      :min-size="15"
-      :max-size="30"
+      :default-size="16"
+      :min-size="16"
+      :max-size="22"
       resizable
     >
       <!-- Sidebar Header -->

@@ -1,7 +1,7 @@
 <template>
   <UCard
     :ui="{
-      body: 'flex flex-col justify-between h-32 overflow-hidden group',
+      body: 'flex flex-col justify-between h-32 w-90 overflow-hidden group',
     }"
   >
     <div class="flex items-start justify-between">
@@ -21,32 +21,46 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { api } from "@/utils/api";
+import getIssues from "@/utils/redmine/getIssues";
+import dayjs from "dayjs";
+
+const toast = useToast();
 
 const count = ref(0);
 const loading = ref(true);
 
-onMounted(async () => {
+// 取得逾期任務
+const getOverdueIssuesCount = async () => {
   loading.value = true;
-  try {
-    const today = new Date().toISOString().split("T")[0];
-    // due_date < today
-    const res = await api.getIssues({
-      assigned_to_id: "me",
-      status_id: "open",
-      due_date: `<${today}`,
-      limit: 1,
-    });
 
-    if (res.success && res.data) {
-      count.value = res.data.total_count;
-    } else {
-      console.error("Failed to fetch overdue issue count:", res.error);
-    }
-  } catch (err) {
-    console.error("Failed to fetch overdue issue count:", err);
-  } finally {
-    loading.value = false;
+  // 計算昨天的日期 (Overdue means due < today <=> due <= yesterday)
+  const yesterday = dayjs().subtract(1, "day").format("YYYY-MM-DD");
+
+  // due_date <= yesterday
+  const result = await getIssues({
+    assigned_to_id: "me",
+    status_id: "open",
+    due_date: `<=${yesterday}`,
+    limit: 1,
+  });
+
+  if (result.success) {
+    count.value = result.data.total_count;
+  } else {
+    toast.add({
+      color: "error",
+      icon: "material-symbols:error",
+      title: "取得逾期任務失敗",
+      description: result.error.message,
+    });
   }
+
+  loading.value = false;
+};
+
+// 頁面初始化
+onMounted(async () => {
+  // 取得逾期任務
+  await getOverdueIssuesCount();
 });
 </script>

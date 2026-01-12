@@ -1,7 +1,7 @@
 {
   "name": "my-tauri-redmine",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,6 +17,9 @@
     "@tauri-apps/plugin-opener": "^2",
     "@tauri-apps/plugin-process": "~2",
     "@tauri-apps/plugin-updater": "~2",
+    "dayjs": "^1.11.19",
+    "echarts": "^6.0.0",
+    "lodash": "^4.17.21",
     "pinia": "^3.0.4",
     "valibot": "^1.2.0",
     "vue": "^3.5.13",
@@ -26,6 +29,7 @@
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/forms": "^0.5.11",
     "@tauri-apps/cli": "^2",
+    "@types/lodash": "^4.17.23",
     "@types/node": "^25.0.3",
     "@vitejs/plugin-vue": "^5.2.1",
     "typescript": "~5.6.2",

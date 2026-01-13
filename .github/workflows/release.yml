@@ -49,6 +49,17 @@ jobs:
       - name: Install frontend dependencies
         run: bun install
 
+      # 7.5 取得 Tag 訊息 (用於 Release Note)
+      - name: Get tag message
+        id: tag_message
+        shell: bash
+        run: |
+          git fetch --tags
+          TAG_MSG=$(git tag -l --format='%(contents)' ${{ github.ref_name }})
+          echo "message<<EOF" >> $GITHUB_OUTPUT
+          echo "$TAG_MSG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       # 8. 打包並上傳 Release
       # 這是 Tauri 官方 Action，會自動執行 tauri build 並簽署
       - name: Build and upload
@@ -67,6 +78,74 @@ jobs:
         with:
           tagName: v__VERSION__ # Release Tag 名稱格式
           releaseName: "App v__VERSION__" # Release 標題格式
-          releaseBody: "See the assets to download this version and install." # Release 內容說明
-          releaseDraft: true # 是否設為草稿 (建議 true，確認沒問題再手動 Publish)
-          prerelease: false
+          releaseBody: ${{ steps.tag_message.outputs.message }} # 使用剛剛讀取到的 Tag 訊息
+          releaseDraft: false # 直接發布，不設為草稿
+          prerelease: true # 標記為 Pre-release
+
+      # 9. 上傳 update.json 到 pCloud
+      - name: Generate and Upload update.json to pCloud
+        if: matrix.platform == 'windows-latest'
+        shell: bash
+        env:
+          PCLOUD_TOKEN: ${{ secrets.PCLOUD_ACCESS_TOKEN }}
+          TAG_NAME: ${{ github.ref_name }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          NOTES: ${{ steps.tag_message.outputs.message }}
+        run: |
+          # 1. 準備變數
+          VERSION=${TAG_NAME#v}
+          PUB_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          # 2. 尋找簽名檔 (.sig)
+          # 路徑通常在 src-tauri/target/release/bundle/nsis/
+          SIG_FILE=$(find src-tauri/target/release/bundle/nsis -name "*.sig" | head -n 1)
+
+          if [ -z "$SIG_FILE" ]; then
+            echo "Error: Signature file not found!"
+            ls -R src-tauri/target/release/bundle
+            exit 1
+          fi
+
+          SIGNATURE=$(cat "$SIG_FILE")
+
+          # 3. 建構下載連結
+          # 假設檔名格式: <ProductName>_<Version>_x64-setup.exe
+          # 我們直接找 .exe 檔名最準確
+          EXE_FILE=$(find src-tauri/target/release/bundle/nsis -name "*.exe" | head -n 1)
+          EXE_FILENAME=$(basename "$EXE_FILE")
+          DOWNLOAD_URL="https://github.com/$REPO_OWNER/$REPO_NAME/releases/download/$TAG_NAME/$EXE_FILENAME"
+
+          # 4. 產生 update.json 內容
+          # 注意：為了確保 JSON 格式正確，這裡做簡單的字串組合。
+          # 若 Notes 包含特殊字元可能會有些風險，但在 Bash 中這樣通常可行。
+          # 為了安全，我們將 Notes 中的雙引號跳脫。
+          SAFE_NOTES=$(echo "$NOTES" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+
+          cat <<EOF > update.json
+          {
+            "version": "$VERSION",
+            "notes": "$SAFE_NOTES",
+            "pub_date": "$PUB_DATE",
+            "platforms": {
+              "windows-x86_64": {
+                "signature": "$SIGNATURE",
+                "url": "$DOWNLOAD_URL"
+              }
+            }
+          }
+          EOF
+
+          echo "Generated update.json content:"
+          cat update.json
+
+          # 5. 上傳到 pCloud (使用 uploadfile API)
+          # path: /Public Folder/RedmineDashboard/ (根據使用者需求)
+          # filename: update.json
+
+          echo "Uploading to pCloud..."
+          curl -F "access_token=$PCLOUD_TOKEN" \
+               -F "path=/Public Folder/RedmineDashboard/" \
+               -F "filename=update.json" \
+               -F "file=@update.json" \
+               "https://api.pcloud.com/uploadfile"

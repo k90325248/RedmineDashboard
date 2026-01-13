@@ -117,3 +117,18 @@ git push origin --delete v0.0.1
   - 專案名稱格式化 (去除前綴編號)。
 - **系統更新**：
   - 升級 `tauri`, `vue`, `echarts` 等依賴版本。
+
+### v0.2.2
+
+- **自動更新修復**：
+  - 修正權限設定 (新增 `updater`, `process`, `dialog` 權限)，解決更新視窗無法彈出及重啟失敗的問題。
+- **開發體驗優化**：
+  - 新增 `bun run bump <version>` 腳本，可一次同步更新所有設定檔的版本號。
+  - 優化 GitHub Release 流程，統一使用單一 Tag (`vX.X.X`) 發布。
+
+### v0.2.3
+
+- **CI/CD 自動化**：
+  - 新增自動上傳 `update.json` 至 pCloud 的流程，加快更新檔同步速度。
+  - GitHub Release 改為 Pre-release 模式並自動發布 (非草稿)。
+  - Release 說明內容將直接讀取 Git Tag 訊息，提升發布效率。

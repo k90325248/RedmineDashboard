@@ -34,6 +34,7 @@ onMounted(async () => {
   // 檢查更新
   try {
     const update = await check();
+    console.log(update);
     if (update) {
       const yes = await confirm(
         `發現新版本 ${update.version}，是否立即更新？\n\n更新內容：\n${

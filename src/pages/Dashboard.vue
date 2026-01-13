@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="w-[unset] md:w-[90%] lg:w-[unset] lg:max-w-7xl mx-auto flex flex-col gap-6"
-  >
+  <div class="w-[90%] lg:max-w-7xl mx-auto flex flex-col gap-6">
     <!-- 歡迎文字 -->
     <div class="flex flex-col gap-1 mb-2">
       <h3 class="text-2xl font-bold text-gray-900 dark:text-white">

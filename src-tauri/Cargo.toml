@@ -1,9 +1,9 @@
 [package]
 name = "my-tauri-redmine"
-version = "0.2.1"
+version = "0.2.2"
 description = "A Tauri App"
 authors = ["you"]
-edition = "2021"
+edition = "2024"
 
 # 請參考 https://doc.rust-lang.org/cargo/reference/manifest.html 查看更多定義
 

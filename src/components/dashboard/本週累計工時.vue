@@ -1,5 +1,5 @@
 <template>
-  <UCard :ui="{ body: 'h-32 w-90' }">
+  <UCard :ui="{ body: 'h-32' }">
     <div class="flex flex-col justify-between h-full overflow-hidden group">
       <div
         class="grid grid-cols-[minmax(0,1fr)_max-content] justify-between gap-2"

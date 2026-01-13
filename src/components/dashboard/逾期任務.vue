@@ -1,8 +1,6 @@
 <template>
   <UCard
-    :ui="{
-      body: 'flex flex-col justify-between h-32 w-90 overflow-hidden group',
-    }"
+    :ui="{ body: 'flex flex-col justify-between h-32 overflow-hidden group' }"
   >
     <div class="flex items-start justify-between">
       <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">

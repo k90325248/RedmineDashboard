@@ -65,7 +65,7 @@ jobs:
           # --- 新版私鑰密碼 ---
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
-          tagName: app-v__VERSION__ # Release Tag 名稱格式
+          tagName: v__VERSION__ # Release Tag 名稱格式
           releaseName: "App v__VERSION__" # Release 標題格式
           releaseBody: "See the assets to download this version and install." # Release 內容說明
           releaseDraft: true # 是否設為草稿 (建議 true，確認沒問題再手動 Publish)

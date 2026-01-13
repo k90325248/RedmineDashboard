@@ -54,7 +54,7 @@ jobs:
         id: tag_message
         shell: bash
         run: |
-          git fetch --tags
+          git fetch --tags -f
           TAG_MSG=$(git tag -l --format='%(contents)' ${{ github.ref_name }})
           echo "message<<EOF" >> $GITHUB_OUTPUT
           echo "$TAG_MSG" >> $GITHUB_OUTPUT

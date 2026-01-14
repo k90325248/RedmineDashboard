@@ -102,6 +102,19 @@ git push origin --delete v0.0.1
 
 ## 版本紀錄 (Changelog)
 
+### v0.3.0 (2026-01-14)
+
+- **活動清單重構 (Activity List)**：
+  - 全面升級為 **Journal-based** 變更紀錄，可顯示詳細的屬性變更 (如狀態、優先權、自訂欄位) 與註解。
+  - 實作 **漸進式載入 (Progressive Loading)**，即時顯示已讀取的活動，無需等待全部請求完成。
+  - 支援 **自訂欄位 (Custom Fields)** 的名稱顯示與變更追蹤。
+- **Dashboard 新功能**：
+  - 新增 **議題狀態圖表 (Issue Status Chart)**，以甜甜圈圖可視化呈現目前指派給自己的議題狀態分佈。
+  - **每日各專案議題耗用時數**：重構資料讀取邏輯，支援 **月份快取 (Monthly Caching)** 與載入狀態指示，大幅提升切換日期的流暢度。
+- **系統架構優化**：
+  - 引入 **Pinia Store (`redmineStore`)**，集中管理欄位名稱與狀態的中文翻譯對照。
+  - 新增 `getIssue` (支援 Journals)、`getIssues` 等 API 工具函式。
+
 ### v0.2.1
 
 - **Dashboard 重構**：

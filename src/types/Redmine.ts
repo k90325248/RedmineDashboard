@@ -8,6 +8,16 @@ export interface RedmineCustomField {
   value: string;
 }
 
+/** Issue 狀態 */
+export interface IssueStatus {
+  /** ID */
+  id: number;
+  /** 名稱 */
+  name: string;
+  /** 是否結案 */
+  is_closed?: boolean;
+}
+
 /** 專案 */
 export interface RedmineProject {
   /** ID */
@@ -84,6 +94,39 @@ export interface RedmineIssue {
   updated_on: string;
   /** 關閉時間 */
   closed_on?: string;
+  /** 期刊 (變更紀錄) */
+  journals?: RedmineJournal[];
+}
+
+/** 期刊細節 */
+export interface RedmineJournalDetail {
+  /** 欄位 */
+  property: string;
+  /** 欄位名稱 */
+  name: string;
+  /** 舊值 */
+  old_value?: string;
+  /** 新值 */
+  new_value?: string;
+}
+
+/** 期刊 */
+export interface RedmineJournal {
+  /** ID */
+  id: number;
+  /** 作者 */
+  user: {
+    /** ID */
+    id: number;
+    /** 名稱 */
+    name: string;
+  };
+  /** 備註 */
+  notes: string;
+  /** 建立時間 */
+  created_on: string;
+  /** 結果 */
+  details: RedmineJournalDetail[];
 }
 
 /** 工時 */

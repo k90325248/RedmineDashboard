@@ -138,3 +138,8 @@ git push origin --delete v0.0.1
 - **自動更新修復**：
   - 修正 pCloud API Endpoint 為 `eapi.pcloud.com` (EU Region)，解決 Token 無效問題。
   - 修正更新檔下載連結格式 (解決 GitHub Release 檔名空格變點的問題)。
+
+### v0.2.5
+
+- **自動更新修復**：
+  - 改用 pCloud Folder ID 進行上傳，徹底解決路徑解析與特殊字元導致的上傳失敗問題。

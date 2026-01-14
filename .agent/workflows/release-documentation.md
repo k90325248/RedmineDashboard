@@ -33,8 +33,8 @@ description: Automate release documentation and message generation
 
 - 語氣親切、簡潔易懂。
 - 避免過多技術術語，專注於使用者能感受到的價值 (例如：修復了更新視窗無法彈出的問題)。
-- **移除標題前綴** (如 "v0.2.3 更新說明：")，直接列出項目。
+- **包含標題前綴** (如 "v0.2.4 更新說明：")。
 - **PowerShell 格式**：請將多行內容合併為單行，並使用 `` `n `` 作為換行符號。
 
 **範例 (PowerShell)**：
-`git tag -a v0.2.4 -m "1. 修復了問題 A。`n2. 優化了功能 B。"`
+`git tag -a v0.2.4 -m "v0.2.4 更新說明：`n1. 修復了問題 A。`n2. 優化了功能 B。"`

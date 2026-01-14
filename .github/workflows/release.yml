@@ -143,15 +143,14 @@ jobs:
           echo "Generated update.json content:"
           cat update.json
 
-          # 5. 上傳到 pCloud (使用 uploadfile API)
-          # path: /Public Folder/RedmineDashboard/ (根據使用者需求)
-          # filename: update.json
-          # 注意：根據 rclone config (hostname = eapi.pcloud.com)，您的帳號位於歐洲區
-          # 因此必須使用 eapi.pcloud.com 而非 api.pcloud.com
+          # 5. 上傳到 pCloud (使用 uploadfile API - 透過 ID 確保路徑正確)
+          # Target Folder: Public Folder/RedmineDashboard (ID: 21372265243)
+          TARGET_ID="21372265243"
 
-          echo "Uploading to pCloud (EU Region)..."
+          # 5.3 使用 folderid 上傳
+          echo "Uploading to pCloud (Folder ID: $TARGET_ID)..."
           curl -F "access_token=$PCLOUD_TOKEN" \
-               -F "path=/Public Folder/RedmineDashboard/" \
+               -F "folderid=$TARGET_ID" \
                -F "filename=update.json" \
                -F "file=@update.json" \
                "https://eapi.pcloud.com/uploadfile"

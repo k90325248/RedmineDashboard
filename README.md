@@ -132,3 +132,9 @@ git push origin --delete v0.0.1
   - 新增自動上傳 `update.json` 至 pCloud 的流程，加快更新檔同步速度。
   - GitHub Release 改為 Pre-release 模式並自動發布 (非草稿)。
   - Release 說明內容將直接讀取 Git Tag 訊息，提升發布效率。
+
+### v0.2.4
+
+- **自動更新修復**：
+  - 修正 pCloud API Endpoint 為 `eapi.pcloud.com` (EU Region)，解決 Token 無效問題。
+  - 修正更新檔下載連結格式 (解決 GitHub Release 檔名空格變點的問題)。

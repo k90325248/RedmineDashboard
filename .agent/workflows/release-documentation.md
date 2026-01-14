@@ -38,7 +38,6 @@ description: Automate release documentation and message generation
 **範例**：
 
 ```text
-v0.2.2 更新說明：
 1. 修復了自動更新視窗無法正常彈出的問題，現在您可以順利接收更新通知了！
 2. 優化了版本升級流程，提升開發穩定性。
 ```

@@ -111,10 +111,14 @@ jobs:
 
           # 3. 建構下載連結
           # 假設檔名格式: <ProductName>_<Version>_x64-setup.exe
-          # 我們直接找 .exe 檔名最準確
           EXE_FILE=$(find src-tauri/target/release/bundle/nsis -name "*.exe" | head -n 1)
           EXE_FILENAME=$(basename "$EXE_FILE")
-          DOWNLOAD_URL="https://github.com/$REPO_OWNER/$REPO_NAME/releases/download/$TAG_NAME/$EXE_FILENAME"
+
+          # GitHub Release 自動將檔名中的空格替換為 "."，因此我們也需要替換
+          # 例如 "Redmine Dashboard" -> "Redmine.Dashboard"
+          URL_FILENAME=${EXE_FILENAME// /.}
+
+          DOWNLOAD_URL="https://github.com/$REPO_OWNER/$REPO_NAME/releases/download/$TAG_NAME/$URL_FILENAME"
 
           # 4. 產生 update.json 內容
           # 注意：為了確保 JSON 格式正確，這裡做簡單的字串組合。
@@ -142,10 +146,12 @@ jobs:
           # 5. 上傳到 pCloud (使用 uploadfile API)
           # path: /Public Folder/RedmineDashboard/ (根據使用者需求)
           # filename: update.json
+          # 注意：根據 rclone config (hostname = eapi.pcloud.com)，您的帳號位於歐洲區
+          # 因此必須使用 eapi.pcloud.com 而非 api.pcloud.com
 
-          echo "Uploading to pCloud..."
+          echo "Uploading to pCloud (EU Region)..."
           curl -F "access_token=$PCLOUD_TOKEN" \
                -F "path=/Public Folder/RedmineDashboard/" \
                -F "filename=update.json" \
                -F "file=@update.json" \
-               "https://api.pcloud.com/uploadfile"
+               "https://eapi.pcloud.com/uploadfile"

@@ -20,11 +20,13 @@ export interface RedmineActivity {
 }
 
 export default async (
-  params: Record<string, string | number> = {}
+  params: Record<string, string | number> = {},
+  signal?: AbortSignal
 ): Promise<ApiReturnData<any>> => {
   const result = await crosFetch<any>({
     path: `/activity.json`,
     params,
+    signal,
   });
 
   return result;

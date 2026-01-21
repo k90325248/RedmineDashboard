@@ -14,6 +14,8 @@ export interface ApiReturnErrorData<T> {
   data?: T;
   /** API 交互錯誤 */
   error: ApiErrorData;
+  /** 中斷 */
+  abort?: boolean;
 }
 /** API 回傳成功 */
 export interface ApiReturnSuccessData<T> {

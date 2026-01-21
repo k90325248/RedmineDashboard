@@ -37,8 +37,8 @@ onMounted(async () => {
     console.log(update);
     if (update) {
       const yes = await confirm(
-        `發現新版本，是否立即更新？\n\n更新內容：\n${update.body || "無"}`,
-        { title: "發現新版本", kind: "info" }
+        `發現新版本，是否立即更新？\n\n${update.body || "更新內容：\n無"}`,
+        { title: "發現新版本", kind: "info" },
       );
 
       if (yes) {

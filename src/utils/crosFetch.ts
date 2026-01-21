@@ -15,6 +15,8 @@ type FetchOption = {
   body?: any;
   /** 標頭 */
   headers?: Record<string, string>;
+  /** 中斷控制器 */
+  signal?: AbortSignal;
 };
 
 export default async <T>({
@@ -23,6 +25,7 @@ export default async <T>({
   params = {},
   body,
   headers = {},
+  signal,
 }: FetchOption): Promise<ApiReturnData<T>> => {
   const store = useUserStore();
   // HOST
@@ -46,6 +49,7 @@ export default async <T>({
         "Content-Type": "application/json",
         ...headers,
       },
+      signal,
     };
     // 請求內容
     if (body) {
@@ -62,13 +66,27 @@ export default async <T>({
 
       console.error(
         `[crosFetch] ${method} ${url.toString()} 請求失敗`,
-        errorData
+        errorData,
       );
       return { success: false, error: errorData };
     }
 
+    // 處理 204 No Content
+    if (response.status === 204) {
+      console.log(
+        `[crosFetch] ${method} ${url.toString()} 請求成功 (No Content)`,
+      );
+      return { success: true, data: null as unknown as T };
+    }
+
     // 解析回應
-    const data = await response.json();
+    const text = await response.text();
+    let data = null;
+
+    if (text) {
+      data = JSON.parse(text);
+    }
+
     console.log(`[crosFetch] ${method} ${url.toString()} 請求成功`, {
       status: response.status,
       data,
@@ -76,6 +94,15 @@ export default async <T>({
 
     return { success: true, data: data as T };
   } catch (error: any) {
+    if (error === "Request canceled" || error.message === "Request cancelled") {
+      console.log("Tauri HTTP 請求已被取消 (使用者離開頁面)");
+      return {
+        success: false,
+        error: { code: 499, message: "Request cancelled" },
+        abort: true,
+      };
+    }
+
     console.error(`[crosFetch] ${method} ${url.toString()} 請求失敗`, error);
 
     let errorMessage = "";

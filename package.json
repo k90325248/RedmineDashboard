@@ -1,7 +1,7 @@
 {
   "name": "my-tauri-redmine",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.3.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -18,13 +18,15 @@
     "@tauri-apps/plugin-opener": "^2",
     "@tauri-apps/plugin-process": "~2",
     "@tauri-apps/plugin-updater": "~2",
+    "@vuepic/vue-datepicker": "^12.1.0",
     "dayjs": "^1.11.19",
     "echarts": "^6.0.0",
     "lodash": "^4.17.21",
     "pinia": "^3.0.4",
     "valibot": "^1.2.0",
     "vue": "^3.5.13",
-    "vue-router": "4"
+    "vue-router": "4",
+    "vue-select": "^4.0.0-beta.6"
   },
   "devDependencies": {
     "@tailwindcss/container-queries": "^0.1.1",
@@ -32,7 +34,9 @@
     "@tauri-apps/cli": "^2",
     "@types/lodash": "^4.17.23",
     "@types/node": "^25.0.3",
+    "@types/vue-select": "^3.16.8",
     "@vitejs/plugin-vue": "^5.2.1",
+    "sass-embedded": "^1.97.2",
     "typescript": "~5.6.2",
     "vite": "^6.0.3",
     "vue-tsc": "^2.1.10"

@@ -1,5 +1,5 @@
 <template>
-  <UDashboardGroup>
+  <UDashboardGroup id="dashboard-ui">
     <UDashboardSidebar
       mode="slideover"
       :default-size="16"
@@ -14,6 +14,7 @@
           <h1 class="text-xl font-bold tracking-tight truncate">
             MiTAC Redmine
           </h1>
+          <!-- <UColorModeSwitch size="xl" /> -->
         </div>
       </template>
       <!-- Sidebar Content -->
@@ -37,14 +38,14 @@
         <div class="w-full flex flex-col gap-2">
           <USeparator />
           <!-- 設定 -->
-          <UButton
+          <!-- <UButton
             icon="material-symbols:settings"
             size="xl"
             color="neutral"
             variant="ghost"
           >
             設定
-          </UButton>
+          </UButton> -->
           <!-- 登出 -->
           <UButton
             class="cursor-pointer"
@@ -66,9 +67,10 @@
       <template #header>
         <UDashboardNavbar>
           <template #title>
-            <h1 class="text-xl font-bold tracking-tight truncate">
+            <h1 class="text-3xl font-extrabold tracking-tight">{{ title }}</h1>
+            <!-- <h1 class="text-xl font-bold tracking-tight truncate">
               {{ title }}
-            </h1>
+            </h1> -->
           </template>
           <template #right>
             <UColorModeSwitch size="xl" />
@@ -103,21 +105,21 @@ const items: NavigationMenuItem[] = [
     icon: "material-symbols:dashboard",
     to: "/dashboard",
   },
-  {
-    label: "專案議題",
-    icon: "material-symbols:folder-open",
-    to: "/project-issues",
-  },
+  // {
+  //   label: "專案議題",
+  //   icon: "material-symbols:folder-open",
+  //   to: "/project-issues",
+  // },
   {
     label: "工時填寫",
     icon: "material-symbols:timer",
     to: "/work-time",
   },
-  {
-    label: "工時匯入",
-    icon: "material-symbols:upload-file",
-    to: "/work-time-import",
-  },
+  // {
+  //   label: "工時匯入",
+  //   icon: "material-symbols:upload-file",
+  //   to: "/work-time-import",
+  // },
 ];
 
 // 登出

@@ -9,23 +9,27 @@ interface getUsersCurrentParams {
   params?: Record<string, string>;
   /** HTTP Header */
   headers?: Record<string, string>;
+  /** HTTP Signal */
+  signal?: AbortSignal;
 }
 
 /** 取得使用者資料 */
 export default async ({
   params = {},
   headers = {},
+  signal,
 }: getUsersCurrentParams): Promise<ApiReturnData<RedmineUser>> => {
   // 取得使用者資料
   const result = await crosFetch<{ user: RedmineUser }>({
     path: "/users/current.json",
     params,
     headers,
+    signal,
   });
 
   // 如果失敗
   if (!result.success) {
-    return { success: false, error: result.error };
+    return { success: false, error: result.error, abort: result.abort };
   }
 
   // 如果成功

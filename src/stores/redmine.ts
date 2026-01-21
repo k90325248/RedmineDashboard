@@ -49,6 +49,16 @@ export const useRedmineStore = defineStore("redmine", {
       11: "轉為客製化",
       12: "需求討論",
     },
+    /** Activity 下拉 */
+    activityList: [
+      "Design",
+      "Development",
+      "Management",
+      "Identify Issue",
+      "Verify Issue",
+      "Bug",
+      "Oversee",
+    ],
   }),
   /** store 的行為 */
   actions: {

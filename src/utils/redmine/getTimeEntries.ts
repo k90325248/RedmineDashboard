@@ -12,13 +12,15 @@ type GetTimeEntriesReturnData = {
 
 /** 取得工時列表 (自動處理分頁) */
 export default async (
-  params: Record<string, string | number> = {}
+  params: Record<string, string | number> = {},
+  signal?: AbortSignal
 ): Promise<ApiReturnData<GetTimeEntriesReturnData>> => {
   // 如果有指定 limit，則不進行自動分頁
   if (params.limit) {
     const result = await crosFetch<GetTimeEntriesReturnData>({
       path: "/time_entries.json",
       params,
+      signal,
     });
     return result;
   }
@@ -32,6 +34,7 @@ export default async (
     const result = await crosFetch<GetTimeEntriesReturnData>({
       path: "/time_entries.json",
       params: { ...params, limit, offset },
+      signal,
     });
 
     if (!result.success) {

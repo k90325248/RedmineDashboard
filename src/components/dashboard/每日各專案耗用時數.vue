@@ -21,14 +21,16 @@
 <script lang="ts" setup>
 import type { EChartsOption } from "echarts";
 
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import useChart from "@/composables/useChart";
-import getTimeEntries from "@/utils/redmine/getTimeEntries";
 import dayjs from "dayjs";
 import _ from "lodash";
 import formatProjectName from "@/utils/formatProjectName";
+import getTimeEntries from "@/utils/redmine/getTimeEntries";
 
 const toast = useToast();
+
+const controller = new AbortController();
 
 // 圖表 DOM
 const chart = ref<any | null>(null);
@@ -71,13 +73,17 @@ const getDataOption = async (): Promise<EChartsOption> => {
     // const endRangeObj = endOfMonth.isAfter(endOfWeek) ? endOfMonth : endOfWeek; // 未使用
 
     // 取得工時 (範圍取大於等於起始日)
-    const result = await getTimeEntries({
-      user_id: "me",
-      spent_on: `>=${startRange}`,
-      limit: 100, // 確保分頁取得所有資料
-    });
+    const result = await getTimeEntries(
+      {
+        user_id: "me",
+        spent_on: `>=${startRange}`,
+        limit: 100, // 確保分頁取得所有資料
+      },
+      controller.signal,
+    );
 
     if (!result.success) {
+      if (result.abort) return {};
       toast.add({
         color: "error",
         icon: "material-symbols:error",
@@ -126,12 +132,12 @@ const getDataOption = async (): Promise<EChartsOption> => {
   // 4. 準備 X 軸日期 (連續日期)
   const daysDiff = filterEnd.diff(filterStart, "day") + 1;
   const xAxisData = Array.from({ length: daysDiff }, (_, i) =>
-    filterStart.add(i, "day").format("YYYY-MM-DD")
+    filterStart.add(i, "day").format("YYYY-MM-DD"),
   );
 
   // 5. 依專案分組
   const groupedByProject = _.groupBy(entries, (e) =>
-    formatProjectName(e.project.name)
+    formatProjectName(e.project.name),
   );
   const projectNames = Object.keys(groupedByProject);
 
@@ -169,14 +175,14 @@ const getDataOption = async (): Promise<EChartsOption> => {
 const chartSetupInfoList = [{ basicOption, dataOption: getDataOption }];
 
 // 載入圖表
-const { setupAll } = useChart(chart, chartSetupInfoList);
+const { setupAll, setChartOption } = useChart(chart, chartSetupInfoList);
 
 // 監聽篩選變更
 watch(value, async () => {
   if (chart.value && chart.value.chart) {
     chart.value.chart.showLoading();
     const option = await getDataOption();
-    chart.value.chart.setOption(option, {
+    setChartOption(chart.value, option, {
       replaceMerge: ["xAxis", "yAxis", "series"],
     });
     chart.value.chart.hideLoading();
@@ -184,4 +190,8 @@ watch(value, async () => {
 });
 
 onMounted(() => setupAll());
+
+onUnmounted(() => {
+  controller.abort();
+});
 </script>

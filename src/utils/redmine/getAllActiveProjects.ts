@@ -13,11 +13,12 @@ type GetProjectsReturnData = {
 
 /** 取得所有啟用中的專案列表 (自動處理分頁) */
 export default async (
-  params: Record<string, string | number> = {}
+  params: Record<string, string | number> = {},
+  signal?: AbortSignal
 ): Promise<ApiReturnData<GetProjectsReturnData>> => {
   // 如果有指定 limit，則不進行自動分頁
   if (params.limit) {
-    const result = await getProjects(params);
+    const result = await getProjects(params, signal);
 
     if (result.success) {
       // Client-side Filter: 只保留 status === 1 (Active)
@@ -36,7 +37,7 @@ export default async (
   let allProjects: RedmineProject[] = [];
 
   while (true) {
-    const result = await getProjects({ ...params, limit, offset });
+    const result = await getProjects({ ...params, limit, offset }, signal);
 
     if (!result.success) {
       return result;

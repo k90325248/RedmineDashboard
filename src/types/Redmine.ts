@@ -139,7 +139,7 @@ export interface RedmineTimeEntry {
     name: string;
   };
   /** 議題 */
-  issue?: {
+  issue: {
     id: number;
   };
   /** 使用者 */
@@ -200,4 +200,23 @@ export interface RedmineMembership {
     id: number;
     name: string;
   }[];
+}
+
+/** 工時活動 */
+export interface RedmineTimeEntryActivity {
+  id: number;
+  name: string;
+  is_default?: boolean;
+}
+
+/** 建立工時 Payload */
+export interface CreateTimeEntryPayload {
+  time_entry: {
+    project_id?: number;
+    issue_id?: number;
+    spent_on: string;
+    hours: number;
+    activity_id: number;
+    comments?: string;
+  };
 }

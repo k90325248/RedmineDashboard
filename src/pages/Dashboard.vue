@@ -30,11 +30,13 @@
       <IssueStatus />
     </div>
     <!-- 底部區塊 -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-6">
+    <div
+      class="grid grid-rows-2 grid-cols-1 lg:grid-cols-2 lg:grid-rows-1 gap-6 pb-6"
+    >
       <!-- 每日各專案議題 -->
-      <DailyIssueTime />
+      <DailyIssueTime class="h-[600px]" />
       <!-- 活動清單 -->
-      <ActivityList />
+      <ActivityList class="h-[600px]" />
     </div>
   </div>
 </template>

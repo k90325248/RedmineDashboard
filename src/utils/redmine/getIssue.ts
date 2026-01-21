@@ -14,11 +14,13 @@ type GetIssueReturnData = {
  */
 export default async (
   id: number | string,
-  params: Record<string, string | number> = {}
+  params: Record<string, string | number> = {},
+  signal?: AbortSignal
 ): Promise<ApiReturnData<GetIssueReturnData>> => {
   const result = await crosFetch<GetIssueReturnData>({
     path: `/issues/${id}.json`,
     params,
+    signal,
   });
 
   return result;

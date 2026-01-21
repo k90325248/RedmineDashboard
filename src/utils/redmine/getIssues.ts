@@ -12,13 +12,15 @@ type GetIssuesReturnData = {
 
 /** 取得議題列表 (自動處理分頁) */
 export default async (
-  params: Record<string, string | number> = {}
+  params: Record<string, string | number> = {},
+  signal?: AbortSignal
 ): Promise<ApiReturnData<GetIssuesReturnData>> => {
   // 如果有指定 limit，則不進行自動分頁
   if (params.limit) {
     const result = await crosFetch<GetIssuesReturnData>({
       path: "/issues.json",
       params,
+      signal,
     });
     return result;
   }
@@ -32,6 +34,7 @@ export default async (
     const result = await crosFetch<GetIssuesReturnData>({
       path: "/issues.json",
       params: { ...params, limit, offset },
+      signal,
     });
 
     if (!result.success) {

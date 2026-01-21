@@ -1,13 +1,16 @@
 import type { ChartSetupInfo } from "@/types/Chart";
-import type { ECharts } from "echarts";
-import { computed, type Ref } from "vue";
+import type { ECharts, EChartsOption, SetOptionOpts } from "echarts";
+import { computed, ref, type Ref } from "vue";
 
 import _ from "lodash";
+import { ECBasicOption } from "echarts/types/src/util/types.js";
 
 export default (
   chartRefs: Ref<(Element | null) | (Element | null)[]>,
-  chartSetupInfoList: ChartSetupInfo[]
+  chartSetupInfoList: ChartSetupInfo[],
 ) => {
+  const currentChartOption = ref<ECBasicOption>({});
+
   const chartList = computed(() => {
     if (Array.isArray(chartRefs.value)) {
       return chartRefs.value;
@@ -15,10 +18,26 @@ export default (
     return [chartRefs.value];
   });
 
+  // 設定圖表資料
+  const setChartOption = async (
+    chart: Element | null,
+    option: EChartsOption,
+    setOptions?: SetOptionOpts,
+  ) => {
+    // 等待圖表渲染
+    const chartInstance = await waitDomRender(chart);
+    // console.log("chartInstance", chartInstance, option, setOptions);
+    // 設定圖表
+    chartInstance.setOption(option, setOptions);
+
+    // 儲存圖表資料
+    currentChartOption.value = chartInstance.getOption();
+  };
+
   // 等待圖表渲染
   const waitDomRender = (
     targetChart: Element | null,
-    timeoutMs = 3000
+    timeoutMs = 3000,
   ): Promise<ECharts> => {
     return new Promise((resolve, reject) => {
       if (targetChart && "chart" in targetChart && targetChart?.chart) {
@@ -48,7 +67,7 @@ export default (
   // 開始產生並設定圖表
   const setup = async (
     chart: Element | null,
-    chartSetupInfo: ChartSetupInfo
+    chartSetupInfo: ChartSetupInfo,
   ) => {
     // 等待圖表渲染
     const chartInstance = await waitDomRender(chart);
@@ -57,9 +76,7 @@ export default (
     const dataOption = await chartSetupInfo.dataOption(chartInstance);
 
     // 設定圖表
-    chartInstance.setOption(
-      _.merge(_.cloneDeep(chartSetupInfo.basicOption), dataOption)
-    );
+    setChartOption(chart, _.merge(chartSetupInfo.basicOption, dataOption));
 
     // 關閉載入中
     chartInstance.hideLoading();
@@ -80,15 +97,15 @@ export default (
       console.warn(
         "圖表數量與設定清單長度不符",
         chartList.value.length,
-        chartSetupInfoList.length
+        chartSetupInfoList.length,
       );
       return;
     }
 
     chartSetupInfoList.forEach((chartSetupInfo, index) =>
-      setup(chartList.value[index], chartSetupInfo)
+      setup(chartList.value[index], chartSetupInfo),
     );
   };
 
-  return { setupAll };
+  return { setupAll, setChartOption };
 };

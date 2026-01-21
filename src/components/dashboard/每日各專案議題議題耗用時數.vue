@@ -1,5 +1,11 @@
 <template>
-  <UCard>
+  <UCard
+    class="h-full"
+    :ui="{
+      root: 'grid grid-rows-[max-content_max-content_1fr] grid-cols-1',
+      body: 'grid grid-cols-1 grid-rows-1 overflow-hidden',
+    }"
+  >
     <!-- 標題區塊 -->
     <template #header>
       <div class="flex items-center justify-between overflow-visible">
@@ -126,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, reactive } from "vue";
+import { ref, computed, watch, reactive, onUnmounted } from "vue";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-tw"; // 匯入繁體中文語系
 import getTimeEntries from "@/utils/redmine/getTimeEntries";
@@ -152,6 +158,8 @@ interface ProjectData {
   issues: IssueData[];
 }
 
+const controller = new AbortController();
+
 // State
 const currentMonthBase = ref(dayjs());
 const selectedDate = ref(dayjs());
@@ -164,7 +172,7 @@ const loadingDates = reactive(new Set<string>());
 
 // Computed
 const currentMonthLabel = computed(() =>
-  currentMonthBase.value.format("YYYY年 M月")
+  currentMonthBase.value.format("YYYY年 M月"),
 );
 
 const calendarDays = computed(() => {
@@ -232,16 +240,21 @@ const fetchDailyIssues = async (date: dayjs.Dayjs) => {
   try {
     // 故意不 await 這裡的 API result 處理，讓 UI 不會被 block？
     // 但因為這是 async function，外部呼叫者(loop) 可以選擇不 await 它
-    const result = await getTimeEntries({
-      user_id: "me",
-      spent_on: dateStr,
-      limit: 100,
-    });
+    const result = await getTimeEntries(
+      {
+        user_id: "me",
+        spent_on: dateStr,
+        limit: 100,
+      },
+      controller.signal,
+    );
 
     if (!result.success) {
-      console.error(`Fetch failed for ${dateStr}`, result.error);
       // 失敗時設為空陣列，避免無限重試，或可加重試邏輯
       monthlyCache.set(dateStr, []);
+
+      if (result.abort) return;
+      console.error(`Fetch failed for ${dateStr}`, result.error);
       return;
     }
 
@@ -256,10 +269,10 @@ const fetchDailyIssues = async (date: dayjs.Dayjs) => {
     // 批量取得 Issue 詳情 (若有 ID)
     const issueMap = new Map<number, string>();
     if (issueIds.size > 0) {
-      const issuesResult = await getIssues({
-        issue_id: Array.from(issueIds).join(","),
-        limit: 100, // 確保取得所有
-      });
+      const issuesResult = await getIssues(
+        { issue_id: Array.from(issueIds).join(","), status_id: "*" },
+        controller.signal,
+      );
 
       if (issuesResult.success) {
         issuesResult.data.issues.forEach((issue) => {
@@ -276,7 +289,7 @@ const fetchDailyIssues = async (date: dayjs.Dayjs) => {
       const projectEntries = groupedByProject[projectId];
       const projectInfo = projectEntries[0].project;
       const groupedByIssue = _.groupBy(projectEntries, (e) =>
-        e.issue ? e.issue.id : "no_issue"
+        e.issue ? e.issue.id : "no_issue",
       );
 
       const issues: IssueData[] = [];
@@ -338,11 +351,15 @@ watch(
   () => {
     fetchMonthIssues();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // 確保選中的日期也有資料(若是直接跳日期)
 watch(selectedDate, (newDate) => {
   fetchDailyIssues(newDate);
+});
+
+onUnmounted(() => {
+  controller.abort();
 });
 </script>

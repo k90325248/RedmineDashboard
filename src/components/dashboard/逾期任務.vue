@@ -18,11 +18,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import getIssues from "@/utils/redmine/getIssues";
 import dayjs from "dayjs";
 
 const toast = useToast();
+
+const controller = new AbortController();
 
 const count = ref(0);
 const loading = ref(true);
@@ -35,16 +37,19 @@ const getOverdueIssuesCount = async () => {
   const yesterday = dayjs().subtract(1, "day").format("YYYY-MM-DD");
 
   // due_date <= yesterday
-  const result = await getIssues({
-    assigned_to_id: "me",
-    status_id: "open",
-    due_date: `<=${yesterday}`,
-    limit: 1,
-  });
+  const result = await getIssues(
+    {
+      assigned_to_id: "me",
+      status_id: "open",
+      due_date: `<=${yesterday}`,
+      limit: 1,
+    },
+    controller.signal
+  );
 
   if (result.success) {
     count.value = result.data.total_count;
-  } else {
+  } else if (!result.abort) {
     toast.add({
       color: "error",
       icon: "material-symbols:error",
@@ -60,5 +65,9 @@ const getOverdueIssuesCount = async () => {
 onMounted(async () => {
   // 取得逾期任務
   await getOverdueIssuesCount();
+});
+
+onUnmounted(() => {
+  controller.abort();
 });
 </script>

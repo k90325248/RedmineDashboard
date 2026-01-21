@@ -33,11 +33,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import getIssues from "@/utils/redmine/getIssues";
 import dayjs from "dayjs";
 
 const toast = useToast();
+
+const controller = new AbortController();
 
 // 待處理議題數量
 const openIssueCount = ref(0);
@@ -53,15 +55,18 @@ const diffLoading = ref(true);
 const getOpenIssueCount = async () => {
   loading.value = true;
 
-  const result = await getIssues({
-    assigned_to_id: "me",
-    status_id: "open",
-    limit: 1,
-  });
+  const result = await getIssues(
+    {
+      assigned_to_id: "me",
+      status_id: "open",
+      limit: 1,
+    },
+    controller.signal
+  );
 
   if (result.success) {
     openIssueCount.value = result.data.total_count;
-  } else {
+  } else if (!result.abort) {
     toast.add({
       color: "error",
       icon: "material-symbols:error",
@@ -82,20 +87,26 @@ const getDiffCount = async () => {
   const lastWeek = dayjs().subtract(7, "day").format("YYYY-MM-DD");
 
   // 過去 7 天建立的議題
-  const createdReq = getIssues({
-    assigned_to_id: "me",
-    status_id: "*",
-    created_on: `>=${lastWeek}`,
-    limit: 1,
-  });
+  const createdReq = getIssues(
+    {
+      assigned_to_id: "me",
+      status_id: "*",
+      created_on: `>=${lastWeek}`,
+      limit: 1,
+    },
+    controller.signal
+  );
 
   // 過去 7 天關閉的議題
-  const closedReq = getIssues({
-    assigned_to_id: "me",
-    status_id: "closed",
-    closed_on: `>=${lastWeek}`,
-    limit: 1,
-  });
+  const closedReq = getIssues(
+    {
+      assigned_to_id: "me",
+      status_id: "closed",
+      closed_on: `>=${lastWeek}`,
+      limit: 1,
+    },
+    controller.signal
+  );
 
   const [createdRes, closedRes] = await Promise.all([createdReq, closedReq]);
 
@@ -110,5 +121,9 @@ const getDiffCount = async () => {
 onMounted(() => {
   getOpenIssueCount();
   getDiffCount();
+});
+
+onUnmounted(() => {
+  controller.abort();
 });
 </script>

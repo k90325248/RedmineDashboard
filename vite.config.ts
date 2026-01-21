@@ -12,6 +12,9 @@ export default defineConfig(async () => ({
     ui({
       ui: {
         colors: { primary: "blue", neutral: "slate" },
+        formField: {
+          variants: { orientation: { vertical: { container: "mt-2" } } },
+        },
       },
     }),
   ],

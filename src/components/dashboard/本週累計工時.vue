@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import getTimeEntries from "@/utils/redmine/getTimeEntries";
 import dayjs from "dayjs";
 import _ from "lodash";
@@ -41,6 +41,8 @@ const toast = useToast();
 const hours = ref(0);
 // 載入中
 const loading = ref(true);
+
+const controller = new AbortController();
 
 // 取得本週累計工時
 const getWeeklyHours = async () => {
@@ -55,15 +57,20 @@ const getWeeklyHours = async () => {
     loading.value = true;
 
     while (true) {
-      const result = await getTimeEntries({
-        user_id: "me",
-        spent_on: `>=${mondayStr}`,
-        limit,
-        offset,
-      });
+      const result = await getTimeEntries(
+        {
+          user_id: "me",
+          spent_on: `>=${mondayStr}`,
+          limit,
+          offset,
+        },
+        controller.signal
+      );
 
       // 錯誤處理
       if (!result.success) {
+        if (result.abort) return;
+
         toast.add({
           color: "error",
           icon: "material-symbols:error",
@@ -104,5 +111,9 @@ const getWeeklyHours = async () => {
 onMounted(async () => {
   // 取得本週工時
   await getWeeklyHours();
+});
+
+onUnmounted(() => {
+  controller.abort();
 });
 </script>

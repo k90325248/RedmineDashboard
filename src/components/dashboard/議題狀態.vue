@@ -10,7 +10,7 @@
 <script lang="ts" setup>
 import type { EChartsOption } from "echarts";
 
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import useChart from "@/composables/useChart";
 import getIssues from "@/utils/redmine/getIssues";
 import _ from "lodash";
@@ -18,6 +18,8 @@ import { useRedmineStore } from "@/stores/redmine";
 
 const toast = useToast();
 const redmineStore = useRedmineStore();
+
+const controller = new AbortController();
 
 // 圖表 DOM
 const chart = ref<any | null>(null);
@@ -56,12 +58,16 @@ const basicOption: EChartsOption = {
 // 取得圖表資料
 const getDataOption = async (): Promise<EChartsOption> => {
   // 並行請求：取得議題列表 與 狀態對照表
-  const issuesResult = await getIssues({
-    assigned_to_id: "me",
-    status_id: "open",
-  });
+  const issuesResult = await getIssues(
+    {
+      assigned_to_id: "me",
+      status_id: "open",
+    },
+    controller.signal
+  );
 
   if (!issuesResult.success) {
+    if (issuesResult.abort) return {};
     toast.add({
       color: "error",
       icon: "material-symbols:error",
@@ -96,4 +102,8 @@ const chartSetupInfoList = [{ basicOption, dataOption: getDataOption }];
 const { setupAll } = useChart(chart, chartSetupInfoList);
 
 onMounted(() => setupAll());
+
+onUnmounted(() => {
+  controller.abort();
+});
 </script>

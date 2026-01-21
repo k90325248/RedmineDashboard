@@ -1,12 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200");
 
+@import "@vuepic/vue-datepicker/dist/main.css";
+@import "vue-select/dist/vue-select.css";
+
 @import "tailwindcss";
 @import "@nuxt/ui";
 
 @theme {
   --font-sans: "Inter", "Noto Sans TC", sans-serif;
   --font-display: "Inter", "Noto Sans TC", sans-serif;
+}
+
+:root {
+  --ui-header-height: --spacing(20);
 }
 
 body {
@@ -16,3 +23,7 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+/* html.dark {
+  @apply bg-gray-900 text-white;
+} */

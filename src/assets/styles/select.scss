@@ -1,0 +1,34 @@
+:root {
+  --dp-input-padding: 10px 30px 10px 12px; /*Padding in the input*/
+  --dp-border-radius: calc(var(--ui-radius) * 1.5);
+}
+
+.dp__theme_dark {
+  --dp-background-color: var(--ui-bg-elevated);
+  --dp-border-color: var(--ui-border-accented);
+  --dp-disabled-color: #1a2539;
+}
+.dp__theme_light {
+  --dp-background-color: var(--ui-bg-elevated);
+  --dp-border-color: var(--ui-border-accented);
+  --dp-disabled-color: #f5f8fb;
+}
+
+.my-select {
+  border-radius: calc(var(--ui-radius) * 1.5);
+  --vs-line-height: 2.125;
+  --vs-border-radius: calc(var(--ui-radius) * 1.5);
+  --vs-border-color: var(--ui-border-accented);
+  background-color: var(--ui-bg-elevated);
+  --vs-dropdown-bg: var(--ui-bg-elevated);
+  --vs-dropdown-max-height: 250px;
+  --vs-selected-color: #212121;
+
+  --vs-disabled-bg: #f5f8fb;
+
+  &.dark {
+    --vs-selected-color: #ffffff;
+    --vs-controls-color: #ffffff;
+    --vs-disabled-bg: #1a2539;
+  }
+}

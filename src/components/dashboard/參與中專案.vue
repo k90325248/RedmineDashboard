@@ -19,9 +19,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
-import getMyActiveProjects from "@/utils/redmine/getMyActiveProjects";
+import { useRedmineStore } from "@/stores/redmine";
 
-const toast = useToast();
+const redmineStore = useRedmineStore();
 
 const controller = new AbortController();
 
@@ -33,18 +33,8 @@ const loading = ref(true);
 onMounted(async () => {
   loading.value = true;
 
-  const result = await getMyActiveProjects();
-
-  if (!result.success) {
-    toast.add({
-      color: "error",
-      icon: "material-symbols:error",
-      title: "取得參與中專案失敗",
-      description: "發生未預期錯誤，請洽系統管理員。",
-    });
-    return;
-  }
-  count.value = result.data!.length;
+  const result = await redmineStore.getEnabledProjects();
+  count.value = result.length;
 
   loading.value = false;
 });

@@ -114,9 +114,13 @@
             >
               <div class="flex-1 pr-4">
                 <div class="text-gray-700 dark:text-gray-300">
-                  <span class="text-xs text-gray-400 mr-1">
+                  <a
+                    class="text-primary text-xs mr-1 font-medium hover:underline cursor-pointer"
+                    target="_blank"
+                    :href="`${userStore.host}/issues/${issue.id}`"
+                  >
                     #{{ issue.id }}
-                  </span>
+                  </a>
                   {{ issue.subject }}
                 </div>
               </div>
@@ -139,11 +143,13 @@ import getTimeEntries from "@/utils/redmine/getTimeEntries";
 import getIssues from "@/utils/redmine/getIssues";
 import _ from "lodash";
 import formatProjectName from "@/utils/formatProjectName";
+import { useUserStore } from "@/stores/user";
 
 dayjs.locale("zh-tw");
 
-const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-// const toast = useToast();
+const userStore = useUserStore();
+
+const weekDays = ["日", "一", "二", "三", "四", "五", "六"];
 
 interface IssueData {
   id: number;
@@ -304,7 +310,7 @@ const fetchDailyIssues = async (date: dayjs.Dayjs) => {
           const issueIdNum = entry.issue?.id;
 
           // 優先使用從 getIssues 查到的 subject，若無則回退到 id
-          subject = issueMap.get(issueIdNum!) || `Issue #${issueIdNum}`;
+          subject = issueMap.get(issueIdNum) || `Issue #${issueIdNum}`;
           id = Number(issueId);
         } else {
           subject = issueEntries[0].comments || "一般工時";

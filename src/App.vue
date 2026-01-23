@@ -11,12 +11,12 @@ import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import DashboardLayout from "./layouts/dashboard.vue";
 import LoginLayout from "./layouts/login.vue";
-import { check } from "@tauri-apps/plugin-updater";
-import { relaunch } from "@tauri-apps/plugin-process";
-import { confirm } from "@tauri-apps/plugin-dialog";
+import { useAppClose } from "./composables/app/useAppClose";
+import { useAppUpdate } from "./composables/app/useAppUpdate";
 
 const route = useRoute();
 
+// 設定 layout
 const layout = computed(() => {
   switch (route.meta.layout) {
     case "login":
@@ -28,26 +28,14 @@ const layout = computed(() => {
   }
 });
 
+// 設定 toaster
 const toaster = { position: "top-center" };
 
 onMounted(async () => {
-  // 檢查更新
-  try {
-    const update = await check();
-    console.log(update);
-    if (update) {
-      const yes = await confirm(
-        `發現新版本，是否立即更新？\n\n${update.body || "更新內容：\n無"}`,
-        { title: "發現新版本", kind: "info" },
-      );
+  // 設定關閉行為
+  await useAppClose();
 
-      if (yes) {
-        await update.downloadAndInstall();
-        await relaunch();
-      }
-    }
-  } catch (error) {
-    console.error("檢查更新失敗:", error);
-  }
+  // 檢查更新
+  useAppUpdate();
 });
 </script>

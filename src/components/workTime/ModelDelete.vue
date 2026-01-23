@@ -108,7 +108,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useUserStore } from "@/stores/user";
-import { RedmineIssue, RedmineTimeEntry } from "@/types/Redmine";
+import { RedmineTimeEntry } from "@/types/Redmine";
 import deleteTimeEntry from "@/utils/redmine/deleteTimeEntry";
 
 /** 工時紀錄 */
@@ -128,7 +128,7 @@ interface WorkLogEntry {
   /** 時數 */
   hours: number;
   /** 原始資料 */
-  originalData: { entry: RedmineTimeEntry; issueData: RedmineIssue | null };
+  originalData: { entry: RedmineTimeEntry };
 }
 
 const userStore = useUserStore();

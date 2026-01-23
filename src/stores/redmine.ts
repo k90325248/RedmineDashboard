@@ -1,3 +1,5 @@
+import { RedmineProject } from "@/types/Redmine";
+import getMyActiveProjects from "@/utils/redmine/getMyActiveProjects";
 import { defineStore } from "pinia";
 
 export const useRedmineStore = defineStore("redmine", {
@@ -59,6 +61,10 @@ export const useRedmineStore = defineStore("redmine", {
       "Bug",
       "Oversee",
     ],
+    /** 使用者擁有的已啟用專案 */
+    enabledProjects: null as RedmineProject[] | null,
+    /** 是否正在載入"使用者擁有的已啟用專案" */
+    isLoadingEnabledProjects: false,
   }),
   /** store 的行為 */
   actions: {
@@ -81,6 +87,54 @@ export const useRedmineStore = defineStore("redmine", {
         };
       }
       return { exists: false, value: String(key) };
+    },
+    /** 取得使用者擁有的已啟用專案 */
+    async getEnabledProjects() {
+      // 已有資料 - 直接回傳
+      if (!this.isLoadingEnabledProjects && this.enabledProjects) {
+        return this.enabledProjects;
+      }
+
+      // 等待載入完成的方法
+      const waitEnabledProjectsFinish = () => {
+        const maxRunTimes = 600;
+        let runTimes = 0;
+
+        return new Promise<boolean>((resolve) => {
+          let it = setInterval(() => {
+            // 限制執行次數
+            if (runTimes >= maxRunTimes) {
+              clearInterval(it);
+              return resolve(false);
+            }
+            // 等待成功
+            if (!this.isLoadingEnabledProjects) {
+              clearInterval(it);
+              return resolve(true);
+            }
+            runTimes += 1;
+          }, 100);
+        });
+      };
+
+      // 如果正在載入 - 等待載入完成
+      if (this.isLoadingEnabledProjects) {
+        const isFinish = await waitEnabledProjectsFinish();
+        if (isFinish && this.enabledProjects) return this.enabledProjects;
+        return [];
+      }
+
+      // 取得專案清單
+      this.isLoadingEnabledProjects = true;
+
+      const result = await getMyActiveProjects();
+      if (result.success) {
+        this.enabledProjects = result.data || null;
+      }
+
+      this.isLoadingEnabledProjects = false;
+
+      return this.enabledProjects || [];
     },
   },
 });

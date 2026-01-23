@@ -51,21 +51,28 @@
             />
             <p v-else class="text-sm text-gray-800 dark:text-gray-200">
               <!-- 動作執行者 -->
-              <span class="font-semibold">{{ item.author.name }}</span>
+              <!-- <span class="font-semibold">{{ item.author.name }}</span> -->
+              <a
+                class="text-primary font-semibold hover:underline cursor-pointer"
+                target="_blank"
+                :href="`${userStore.host}/users/${item.author.id}`"
+              >
+                {{ item.author.name }}
+              </a>
               <!-- 動作 -->
               <span class="mx-1 text-gray-500">{{ item.actionText }}</span>
               <!-- 目標 -->
-              <a
-                v-if="item.url"
-                :href="item.url"
-                target="_blank"
-                class="text-primary font-medium hover:underline cursor-pointer"
-              >
-                {{ item.targetName }}
-              </a>
-              <span v-else class="text-gray-800 dark:text-gray-200 font-medium">
-                {{ item.targetName }}
-              </span>
+              <template v-if="item.targetId">
+                <a
+                  class="text-primary font-medium hover:underline cursor-pointer"
+                  target="_blank"
+                  :href="`${userStore.host}/issues/${item.targetId}`"
+                >
+                  #{{ item.targetId }}
+                </a>
+                <span class="mx-1">{{ item.targetName }}</span>
+              </template>
+              <span v-else class="font-medium">{{ item.targetName }}</span>
             </p>
 
             <!-- 備註 -->
@@ -130,6 +137,7 @@ import "dayjs/locale/zh-tw";
 import getIssues from "@/utils/redmine/getIssues";
 import getIssue from "@/utils/redmine/getIssue";
 import { useRedmineStore } from "@/stores/redmine";
+import { useUserStore } from "@/stores/user";
 
 dayjs.extend(relativeTime);
 // dayjs.locale("zh-tw");
@@ -149,13 +157,15 @@ interface ActivityItem {
   /** ID */
   id: string;
   /** 作者 */
-  author: { name: string; id?: number };
+  author: { name: string; id: number };
   /** icon */
   icon: string;
   /** icon class */
   iconClass: string;
   /** 操作文字 */
   actionText: string;
+  /** 目標ID */
+  targetId?: number;
   /** 目標名稱 */
   targetName: string;
   /** 備註 */
@@ -166,12 +176,11 @@ interface ActivityItem {
   timeAgo: string;
   /** 完整時間 */
   fullTime: string;
-  /** 鏈結 */
-  url?: string;
   /** 時間戳 */
   timestamp: number;
 }
 
+const userStore = useUserStore();
 const redmineStore = useRedmineStore();
 
 const activities = ref<ActivityItem[]>([]);
@@ -185,12 +194,12 @@ const formattedActivities = computed<ActivityItem[]>(() => {
       icon: "",
       iconClass: "",
       actionText: "",
+      targetId: undefined,
       targetName: "",
       notes: "",
       details: [],
       timeAgo: "",
       fullTime: "",
-      url: "",
       timestamp: 0,
     }));
   }
@@ -285,11 +294,12 @@ const fetchActivities = async () => {
               const { icon, cls } = getIconForType("create");
               newActivities.push({
                 id: `create-${issue.id}`,
-                author: { name: issue.author.name },
+                author: { name: issue.author.name, id: issue.author.id },
                 icon,
                 iconClass: cls,
                 actionText: "新增議題",
-                targetName: `#${issue.id} ${issue.subject}`,
+                targetId: issue.id,
+                targetName: issue.subject,
                 notes: issue.description
                   ? issue.description.substring(0, 100) +
                     (issue.description.length > 100 ? "..." : "")
@@ -297,7 +307,6 @@ const fetchActivities = async () => {
                 timeAgo: createdDate.fromNow(),
                 fullTime: createdDate.format("YYYY-MM-DD HH:mm:ss"),
                 timestamp: createdDate.valueOf(),
-                url: undefined,
               });
             }
 
@@ -398,23 +407,23 @@ const fetchActivities = async () => {
                   continue;
 
                 const { icon, cls } = getIconForType(type);
-                let actionText = "updated";
-                if (type === "note") actionText = "commented on";
-                if (type === "status") actionText = "changed status of";
+                let actionText = "更新";
+                if (type === "note") actionText = "新增備註";
+                if (type === "status") actionText = "變更狀態";
 
                 newActivities.push({
                   id: `journal-${journal.id}`,
-                  author: { name: journal.user.name || "Unknown" },
+                  author: { name: journal.user.name, id: journal.user.id },
                   icon,
                   iconClass: cls,
                   actionText,
-                  targetName: `#${detailedIssue.id} ${detailedIssue.subject}`,
+                  targetId: detailedIssue.id,
+                  targetName: detailedIssue.subject,
                   notes: journal.notes,
                   details: journalDetails,
                   timeAgo: journalDate.fromNow(),
                   fullTime: journalDate.format("YYYY-MM-DD HH:mm:ss"),
                   timestamp: journalDate.valueOf(),
-                  url: undefined, // Add url if needed
                 });
               }
             }

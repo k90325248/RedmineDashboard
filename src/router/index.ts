@@ -34,6 +34,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../pages/WorkTimeImport.vue"),
     meta: { layout: "dashboard", requiresAuth: true, title: "工時匯入" },
   },
+  {
+    path: "/setting",
+    name: "Setting",
+    component: () => import("../pages/Setting.vue"),
+    meta: { layout: "dashboard", requiresAuth: true, title: "設定" },
+  },
 ];
 
 const router = createRouter({ history: createWebHistory(), routes });

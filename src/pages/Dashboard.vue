@@ -50,7 +50,7 @@ import ParticipatingProjects from "@/components/dashboard/參與中專案.vue";
 import ThisWeekTimeStacked from "@/components/dashboard/每日各專案耗用時數.vue";
 import IssueStatus from "@/components/dashboard/議題狀態.vue";
 import DailyIssueTime from "@/components/dashboard/每日各專案議題議題耗用時數.vue";
-import ActivityList from "@/components/dashboard/活動清單.vue";
+import ActivityList from "@/components/dashboard/議題活動清單.vue";
 
 import { useUserStore } from "@/stores/user";
 import { computed } from "vue";

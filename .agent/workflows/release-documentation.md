@@ -8,8 +8,10 @@ description: Automate release documentation and message generation
 
 ## 1. 統整改動並更新 README.md
 
-1.  **分析改動**：檢視自上次版本發布後的所有程式碼變更。
-2.  **更新 README**：
+1.  **驗證 TS**：執行`vue-tsc --noEmit`檢查是否有錯誤。
+2.  **分析改動**：檢視自上次版本發布後的所有程式碼變更。
+3.  \*\*更新版本號：使用`bun run bump {新版本}`來更新版版號。
+4.  **更新 README**：
     - 在 `README.md` 的「版本紀錄 (Changelog)」區塊頂部，插入新版本的版號與日期。
     - 列出詳細的改動項目，需分類 (例如：新功能、修復、優化) 並使用 **繁體中文** 撰寫。
     - 確保格式與現有紀錄保持一致。

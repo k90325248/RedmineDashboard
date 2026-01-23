@@ -179,12 +179,13 @@ import type {
   RedmineIssue,
   RedmineTimeEntryActivity,
 } from "@/types/Redmine";
-import getMyActiveProjects from "@/utils/redmine/getMyActiveProjects";
 import getTimeEntryActivities from "@/utils/redmine/getTimeEntryActivities";
 import createTimeEntry from "@/utils/redmine/createTimeEntry";
+import { useRedmineStore } from "@/stores/redmine";
 
 const toast = useToast();
 const colorMode = useColorMode();
+const redmineStore = useRedmineStore();
 const emits = defineEmits(["add-entry"]);
 
 // 原始資料
@@ -253,14 +254,13 @@ const getActivitiesList = async () => {
 // 取得議題清單
 const getIssuesList = async () => {
   // 先取得專案清單
-  const pRes = await getMyActiveProjects();
-  if (!pRes.success) return false;
+  const pRes = await redmineStore.getEnabledProjects();
   // 再取得議題清單
   const iRes = await getIssues({ assigned_to_id: "me" });
   if (!iRes.success) return false;
 
   // 原始資料
-  projects.value = pRes.data || [];
+  projects.value = pRes || [];
   issues.value = iRes.data.issues;
 
   // 下拉選單資料
@@ -379,11 +379,11 @@ const handleCancel = (
   } else if (resetDate) {
     workState.date = dayjs().format("YYYY-MM-DD");
   }
-  workState.project = undefined;
-  workState.activity = defaultActivity.value;
-  workState.issue = undefined;
-  workState.hours = 0;
-  workState.comments = "";
+  // workState.project = undefined;
+  // workState.activity = defaultActivity.value;
+  // workState.issue = undefined;
+  // workState.hours = 0;
+  // workState.comments = "";
 };
 
 // 初始化資料

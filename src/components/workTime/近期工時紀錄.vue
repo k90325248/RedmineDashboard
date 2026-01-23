@@ -16,10 +16,15 @@
 
     <UCard class="p-0 sm:p-0">
       <UTable
+        ref="table"
+        v-model:pagination="pagination"
         :data="recentEntries"
         :columns="columns"
         :empty="isLoading ? '載入中...' : '沒有工時紀錄'"
         :loading="isLoading"
+        :pagination-options="{
+          getPaginationRowModel: getPaginationRowModel(),
+        }"
       >
         <template v-if="isLoading" #date-cell>
           <USkeleton class="h-6 w-24" />
@@ -43,19 +48,30 @@
           <USkeleton class="h-6 w-10" />
         </template>
       </UTable>
+      <template #footer>
+        <div class="w-full flex items-center justify-center">
+          <UPagination
+            :page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
+            :items-per-page="table?.tableApi?.getState().pagination.pageSize"
+            :total="table?.tableApi?.getFilteredRowModel().rows.length"
+            @update:page="(p) => table?.tableApi?.setPageIndex(p - 1)"
+          />
+        </div>
+      </template>
     </UCard>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
-import { h, ref, onMounted, resolveComponent } from "vue";
+import { h, ref, onMounted, resolveComponent, useTemplateRef } from "vue";
 import dayjs from "dayjs";
 import getTimeEntries from "@/utils/redmine/getTimeEntries";
-import getIssue from "@/utils/redmine/getIssue";
-import { RedmineIssue, RedmineTimeEntry } from "@/types/Redmine";
+import { RedmineTimeEntry } from "@/types/Redmine";
 import ModelDelete from "./ModelDelete.vue";
 import ModelUpdate from "./ModelUpdate.vue";
+import getIssues from "@/utils/redmine/getIssues";
+import { getPaginationRowModel } from "@tanstack/vue-table";
 
 /** 工時紀錄 */
 interface WorkLogEntry {
@@ -74,8 +90,10 @@ interface WorkLogEntry {
   /** 時數 */
   hours: number;
   /** 原始資料 */
-  originalData: { entry: RedmineTimeEntry; issueData: RedmineIssue | null };
+  originalData: { entry: RedmineTimeEntry };
 }
+
+const table = useTemplateRef("table");
 
 const UBadge = resolveComponent("UBadge");
 const UButton = resolveComponent("UButton");
@@ -87,6 +105,9 @@ const isLoading = ref(false);
 
 const modalDelete = overlay.create(ModelDelete);
 const modalUpdate = overlay.create(ModelUpdate);
+
+// 分頁
+const pagination = ref({ pageIndex: 0, pageSize: 5 });
 
 // 表格欄位
 const columns: TableColumn<WorkLogEntry>[] = [
@@ -193,20 +214,33 @@ const getRecent30daysEntries = async () => {
   if (res.success) {
     const tempRecentEntries: WorkLogEntry[] = [];
 
+    // 批量取得 Issue 詳情 (若有 ID)
+    const issueMap = new Map<number, string>();
+    const issueIds = res.data.time_entries.map((entry) => entry.issue.id);
+    if (issueIds.length > 0) {
+      const issuesResult = await getIssues({
+        issue_id: Array.from(issueIds).join(","),
+        status_id: "*",
+      });
+      if (issuesResult.success) {
+        issuesResult.data.issues.forEach((issue) => {
+          issueMap.set(issue.id, issue.subject);
+        });
+      }
+    }
+
     for (let index = 0; index < res.data.time_entries.length; index++) {
       const entry = res.data.time_entries[index];
-      const issueRes = await getIssue(entry.issue.id);
-      const issueData = issueRes.success ? issueRes.data.issue : null;
 
       tempRecentEntries.push({
         id: entry.id,
         date: entry.spent_on,
         project: entry.project.name,
-        issueId: issueData ? issueData.id : entry.issue.id,
-        issueName: issueData ? issueData.subject : "-",
+        issueId: entry.issue.id,
+        issueName: issueMap.get(entry.issue.id) || "-",
         activity: entry.activity.name,
         hours: entry.hours,
-        originalData: { entry, issueData },
+        originalData: { entry },
       });
     }
     recentEntries.value = tempRecentEntries;

@@ -126,11 +126,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 import { useUserStore } from "@/stores/user";
-import {
-  RedmineIssue,
-  RedmineTimeEntry,
-  RedmineTimeEntryActivity,
-} from "@/types/Redmine";
+import { RedmineTimeEntry, RedmineTimeEntryActivity } from "@/types/Redmine";
 import updateTimeEntry from "@/utils/redmine/updateTimeEntry";
 import getTimeEntryActivities from "@/utils/redmine/getTimeEntryActivities";
 import { SelectItem } from "@nuxt/ui";
@@ -152,7 +148,7 @@ interface WorkLogEntry {
   /** 時數 */
   hours: number;
   /** 原始資料 */
-  originalData: { entry: RedmineTimeEntry; issueData: RedmineIssue | null };
+  originalData: { entry: RedmineTimeEntry };
 }
 
 const userStore = useUserStore();

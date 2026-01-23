@@ -38,14 +38,16 @@
         <div class="w-full flex flex-col gap-2">
           <USeparator />
           <!-- 設定 -->
-          <!-- <UButton
+          <UButton
             icon="material-symbols:settings"
             size="xl"
             color="neutral"
             variant="ghost"
+            active-variant="solid"
+            to="/setting"
           >
             設定
-          </UButton> -->
+          </UButton>
           <!-- 登出 -->
           <UButton
             class="cursor-pointer"

@@ -36,7 +36,7 @@
       <!-- Sidebar Footer -->
       <template #footer>
         <div class="w-full flex flex-col gap-2">
-          <USeparator />
+          <!-- <USeparator /> -->
           <!-- 設定 -->
           <UButton
             icon="material-symbols:settings"
@@ -75,7 +75,18 @@
             </h1> -->
           </template>
           <template #right>
-            <UColorModeSwitch size="xl" />
+            <div class="flex items-center gap-2">
+              <UDropdownMenu
+                :content="{ align: 'end' }"
+                :ui="{ content: 'w-64', itemLabel: 'font-normal' }"
+                :items="helpItems"
+              >
+                <UButton variant="ghost">
+                  <UIcon name="ic:round-help-outline" class="size-5" />
+                </UButton>
+              </UDropdownMenu>
+              <UColorModeSwitch size="xl" />
+            </div>
           </template>
         </UDashboardNavbar>
       </template>
@@ -88,7 +99,7 @@
 </template>
 
 <script setup lang="ts">
-import type { NavigationMenuItem } from "@nuxt/ui";
+import type { DropdownMenuItem, NavigationMenuItem } from "@nuxt/ui";
 
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -122,6 +133,21 @@ const items: NavigationMenuItem[] = [
   //   icon: "material-symbols:upload-file",
   //   to: "/work-time-import",
   // },
+];
+// 說明選單
+const helpItems: DropdownMenuItem[] = [
+  {
+    type: "label",
+    label: "快速填寫工時",
+    icon: "material-symbols:timer",
+    kbds: ["meta", "Shift", "Q"],
+  },
+  {
+    label: "重新整理",
+    icon: "material-symbols:refresh",
+    kbds: ["F5"],
+    onSelect: () => window.location.reload(),
+  },
 ];
 
 // 登出

@@ -3,6 +3,7 @@ import type { RedmineUser } from "@/types/Redmine";
 import { defineStore } from "pinia";
 import getUsersCurrent from "@/utils/redmine/getUsersCurrent";
 import { useToast } from "@nuxt/ui/composables";
+import useWindowInfo from "@/composables/useWindowInfo";
 
 export const useUserStore = defineStore("user", {
   /** store 的狀態 */
@@ -51,6 +52,8 @@ export const useUserStore = defineStore("user", {
       if (!this.apiKey) return false;
 
       try {
+        const { isMainWindow } = useWindowInfo();
+
         // 取得使用者資料
         const result = await getUsersCurrent({});
 
@@ -58,14 +61,18 @@ export const useUserStore = defineStore("user", {
           const userData = result.data;
           // 儲存使用者資料
           this.setUserDate(userData);
-          // 顯示歡迎訊息
-          useToast().add({
-            color: "success",
-            icon: "material-symbols:check-circle",
-            title: "歡迎回來!",
-            description: `${userData.firstname}`,
-            duration: 3000,
-          });
+
+          if (isMainWindow.value) {
+            // 顯示歡迎訊息
+            useToast().add({
+              color: "success",
+              icon: "material-symbols:check-circle",
+              title: "歡迎回來!",
+              description: `${userData.firstname}`,
+              duration: 3000,
+            });
+          }
+
           return true;
         } else {
           console.warn("Session restore failed:", result.error);

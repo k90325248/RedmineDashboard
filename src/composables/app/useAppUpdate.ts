@@ -2,6 +2,7 @@ import { check } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { confirm, message } from "@tauri-apps/plugin-dialog";
 import { useIntervalFn } from "@vueuse/core";
+import useWindowInfo from "../useWindowInfo";
 
 /**
  * 檢查更新
@@ -9,6 +10,9 @@ import { useIntervalFn } from "@vueuse/core";
  */
 export async function checkForUpdate(manual = false) {
   try {
+    const { isMainWindow } = useWindowInfo();
+    if (!isMainWindow.value) return;
+
     const update = await check();
     console.log(update);
 

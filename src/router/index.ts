@@ -40,6 +40,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../pages/Setting.vue"),
     meta: { layout: "dashboard", requiresAuth: true, title: "設定" },
   },
+  {
+    path: "/quick-time",
+    name: "QuickTime",
+    component: () => import("../pages/QuickTime.vue"),
+    meta: { layout: "blank", requiresAuth: true, title: "快速記時" },
+  },
 ];
 
 const router = createRouter({ history: createWebHistory(), routes });

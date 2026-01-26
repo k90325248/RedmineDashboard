@@ -18,7 +18,9 @@
               關閉時縮小至系統列
             </span>
             <span class="text-sm text-gray-500 dark:text-gray-400">
-              點擊關閉按鈕時，將應用程式隱藏而非結束
+              若關閉此選項，點擊關閉按鈕將直接
+              <strong>結束應用程式</strong>
+              ，且無法使用快速填寫快捷鍵
             </span>
           </div>
           <USwitch

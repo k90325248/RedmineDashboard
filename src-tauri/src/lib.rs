@@ -12,9 +12,100 @@ fn greet(name: &str) -> String {
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
+use std::sync::{
+    Arc,
+    atomic::{AtomicBool, Ordering},
+};
+use tauri::{State, Window};
+
+// 狀態管理：是否忽略失去焦點事件
+struct IgnoreBlur(Arc<AtomicBool>);
+
+// 開始拖曳視窗的指令
+#[tauri::command]
+fn start_drag(window: Window, state: State<IgnoreBlur>) {
+    // 設置忽略失去焦點標記為 true
+    state.0.store(true, Ordering::SeqCst);
+
+    // 開始拖曳
+    let _ = window.start_dragging();
+
+    // 延遲 500ms 後重置標記
+    // 這是為了防止拖曳開始時觸發的瞬間 blur 導致視窗關閉
+    let ignore_blur = state.0.clone();
+    tauri::async_runtime::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+        ignore_blur.store(false, Ordering::SeqCst);
+    });
+}
+
+// 狀態管理：是否釘選視窗 (不自動隱藏)
+struct IsPinned(Arc<AtomicBool>);
+
+// 設定釘選狀態
+#[tauri::command]
+fn set_pinned(pinned: bool, state: State<IsPinned>) {
+    state.0.store(pinned, Ordering::SeqCst);
+}
+
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // 初始化共享狀態
+    let ignore_blur = Arc::new(AtomicBool::new(false));
+    let is_pinned = Arc::new(AtomicBool::new(false));
+
     tauri::Builder::default()
-        .setup(|app| {
+        .plugin(
+            tauri_plugin_global_shortcut::Builder::new()
+                .with_shortcut("ctrl+shift+q")
+                .unwrap()
+                .with_handler(|app, shortcut, event| {
+                    if event.state == tauri_plugin_global_shortcut::ShortcutState::Pressed {
+                        if shortcut.matches(
+                            tauri_plugin_global_shortcut::Modifiers::SHIFT
+                                | tauri_plugin_global_shortcut::Modifiers::CONTROL,
+                            tauri_plugin_global_shortcut::Code::KeyQ,
+                        ) {
+                            if let Some(window) = app.get_webview_window("quick") {
+                                if window.is_visible().unwrap_or(false) {
+                                    let _ = window.hide();
+                                } else {
+                                    let _ = window.show();
+                                    let _ = window.set_focus();
+                                }
+                            }
+                        }
+                    }
+                })
+                .build(),
+        )
+        .manage(IgnoreBlur(ignore_blur.clone()))
+        .manage(IsPinned(is_pinned.clone()))
+        .invoke_handler(tauri::generate_handler![greet, start_drag, set_pinned])
+        .setup(move |app| {
+            // 監聽 quick 視窗的焦點事件，失去焦點時隱藏
+            // 僅在正式版 (Release) 生效，開發模式 (Dev) 方便除錯不隱藏
+            // 暫時在 Dev 模式也開啟以測試拖曳修復效果
+            if let Some(quick_window) = app.get_webview_window("quick") {
+                let quick_window_clone = quick_window.clone();
+                let ignore_blur = ignore_blur.clone();
+                let is_pinned = is_pinned.clone();
+                quick_window.on_window_event(move |event| {
+                    if let tauri::WindowEvent::Focused(focused) = event {
+                        if !focused {
+                            // 如果正在拖曳 (或是剛開始拖曳)，則忽略隱藏
+                            let dragging = ignore_blur.load(Ordering::SeqCst);
+                            // 如果視窗被釘選，則忽略隱藏
+                            let pinned = is_pinned.load(Ordering::SeqCst);
+
+                            if !dragging && !pinned {
+                                let _ = quick_window_clone.hide();
+                            }
+                        }
+                    }
+                });
+            }
+
             let tray_menu = Menu::new(app)?;
             let show_i = MenuItem::with_id(app, "show", "顯示", true, None::<&str>)?;
             let quit_i = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;
@@ -122,7 +213,6 @@ pub fn run() {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
         .run(tauri::generate_context!())
         .expect("執行 Tauri 應用程式時發生錯誤");
 }

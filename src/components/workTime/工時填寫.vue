@@ -1,5 +1,30 @@
 <template>
-  <UCard>
+  <UCard :ui="{ header: 'p-0 sm:px-0' }">
+    <template v-if="isQuickMode" #header>
+      <div
+        class="p-4 sm:px-6 flex items-center gap-2"
+        :class="{ 'cursor-move': !isPinned }"
+        @mousedown.self="emits('start-drag')"
+      >
+        <div class="flex-1 flex items-center gap-2 pointer-events-none">
+          <UIcon name="i-heroicons-clock" class="size-5" />
+          <span class="text-lg font-bold">工時填寫</span>
+        </div>
+        <UButton
+          class="px-4 cursor-pointer"
+          type="button"
+          variant="ghost"
+          :loading="isLoading"
+          @click="emits('update:isPinned', !isPinned)"
+        >
+          <UIcon
+            class="size-5"
+            :name="isPinned ? 'ri:pushpin-2-fill' : 'ri:pushpin-line'"
+          />
+        </UButton>
+      </div>
+    </template>
+
     <UForm
       class="flex flex-col gap-6"
       :schema="workTimeSchema"
@@ -7,7 +32,7 @@
       @submit="handleSubmit"
     >
       <!-- 第一行 -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <!-- 日期 -->
         <UFormField label="日期" name="date" required>
           <VueDatePicker
@@ -15,7 +40,7 @@
             :dark="colorMode === 'dark'"
             :input-attrs="{ clearable: false }"
             :time-config="{ enableTimePicker: false }"
-            :formats="{ input: 'yyyy/MM/dd EEEE' }"
+            :formats="{ input: 'yyyy/MM/dd E' }"
             model-type="yyyy-MM-dd"
             teleport="body"
             :locale="zhTW"
@@ -40,25 +65,11 @@
         </UFormField>
         <!-- 活動 -->
         <UFormField
-          class="md:col-span-2 lg:col-span-1"
+          class="col-span-2 sm:col-span-1"
           label="活動"
           name="activity"
           required
         >
-          <!-- <vSelect
-            v-model="workState.activity"
-            class="my-select"
-            :class="{ dark: colorMode === 'dark' }"
-            label="name"
-            :options="activities"
-            :reduce="(opt: RedmineTimeEntryActivity) => opt.id"
-            :clearable="false"
-            :disabled="isLoading"
-          >
-            <template v-if="isLoading" #open-indicator>
-              <UIcon class="animate-spin size-4" name="i-lucide-loader" />
-            </template>
-          </vSelect> -->
           <USelectMenu
             v-model="workState.activity"
             class="w-full"
@@ -75,7 +86,7 @@
         </UFormField>
       </div>
       <!-- 專案 -->
-      <UFormField label="專案" name="project">
+      <!-- <UFormField label="專案" name="project">
         <USelectMenu
           v-model="workState.project"
           class="w-full"
@@ -89,7 +100,7 @@
           loading-icon="i-lucide-loader"
           :disabled="isLoading"
         />
-      </UFormField>
+      </UFormField> -->
       <!-- 議題 -->
       <UFormField label="議題" name="issue" required>
         <USelectMenu
@@ -183,10 +194,18 @@ import getTimeEntryActivities from "@/utils/redmine/getTimeEntryActivities";
 import createTimeEntry from "@/utils/redmine/createTimeEntry";
 import { useRedmineStore } from "@/stores/redmine";
 
+defineProps({
+  // 是否快速模式
+  isQuickMode: { type: Boolean, default: false },
+  // 是否釘選
+  isPinned: { type: Boolean, default: false },
+});
+
 const toast = useToast();
 const colorMode = useColorMode();
 const redmineStore = useRedmineStore();
-const emits = defineEmits(["add-entry"]);
+
+const emits = defineEmits(["add-entry", "update:isPinned", "start-drag"]);
 
 // 原始資料
 const projects = ref<RedmineProject[]>([]);

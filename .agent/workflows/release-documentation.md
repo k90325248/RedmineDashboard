@@ -8,7 +8,7 @@ description: Automate release documentation and message generation
 
 ## 1. 統整改動並更新 README.md
 
-1.  **驗證 TS**：執行`vue-tsc --noEmit`檢查是否有錯誤。
+1.  **驗證 TS**：執行`bun run vue-tsc --noEmit`檢查是否有錯誤。
 2.  **分析改動**：檢視自上次版本發布後的所有程式碼變更。
 3.  \*\*更新版本號：使用`bun run bump {新版本}`來更新版版號。
 4.  **更新 README**：

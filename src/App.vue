@@ -1,5 +1,5 @@
 <template>
-  <UApp :toaster="toaster">
+  <UApp :toaster="toaster" :scroll-body="false">
     <component :is="layout">
       <RouterView />
     </component>
@@ -11,6 +11,7 @@ import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import DashboardLayout from "./layouts/dashboard.vue";
 import LoginLayout from "./layouts/login.vue";
+import BlankLayout from "./layouts/blank.vue";
 import { useAppClose } from "./composables/app/useAppClose";
 import { useAppUpdate } from "./composables/app/useAppUpdate";
 
@@ -23,6 +24,8 @@ const layout = computed(() => {
       return LoginLayout;
     case "dashboard":
       return DashboardLayout;
+    case "blank":
+      return BlankLayout;
     default:
       return "div";
   }

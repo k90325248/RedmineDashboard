@@ -1,6 +1,6 @@
 [package]
 name = "my-tauri-redmine"
-version = "0.4.0"
+version = "0.5.0"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2024"
@@ -27,7 +27,9 @@ tauri-plugin-dialog = "2"
 tauri-plugin-http = "2"
 tauri-plugin-store = "2"
 tauri-plugin-single-instance = "2.3.7"
+tokio = { version = "1.49.0", features = ["time", "rt"] }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-autostart = "2"
+tauri-plugin-global-shortcut = "2"
 tauri-plugin-updater = "2"

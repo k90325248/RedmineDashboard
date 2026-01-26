@@ -14,6 +14,9 @@ export default defineConfig(async () => ({
         colors: { primary: "blue", neutral: "slate" },
         formField: {
           variants: { orientation: { vertical: { container: "mt-2" } } },
+          slots: {
+            error: "absolute bottom-0 right-1 pointer-events-none",
+          },
         },
       },
     }),
